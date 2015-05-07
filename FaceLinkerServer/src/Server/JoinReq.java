@@ -1,19 +1,20 @@
 package Server;
 
 public class JoinReq {
-	private String ScreenID;
-	private String Password;
-	
-	public String getScreenID() {
-		return ScreenID;
+	private String screen_name;
+	private String password;
+	public String getScreen_name() {
+		return screen_name;
 	}
-	public void setScreenID(String screenID) {
-		ScreenID = screenID;
+	public void setScreen_name(String screen_name) {
+		this.screen_name = screen_name;
 	}
 	public String getPassword() {
-		return Password;
+		return password;
 	}
 	public void setPassword(String password) {
-		Password = password;
+		this.password = password;
 	}
+	
+	
 }
