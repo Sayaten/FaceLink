@@ -45,7 +45,6 @@ public class PacketCodec {
 		return dst;
 	}
 	
-	
 	// About profile write request
 	// Encode profile write request packet data
 	public String encode_ProfileWriteReq(ProfileWriteReq pk_data){

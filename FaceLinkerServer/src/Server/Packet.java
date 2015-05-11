@@ -9,7 +9,7 @@ public class Packet {
 	public static final String PK_PRO_WRITE_ACK = "PRO_WRITE_ACK";
 	
 	public static final String FIELD_DELIM = "|";
-	public static final String PK_DELIM = "\n";
+	public static final String PK_DELIM = "?";
 	
 	// ACK Type
 	// About join request
@@ -23,4 +23,24 @@ public class Packet {
 	private String type;
 	private String data;
 	
+	Packet(String type, String data){
+		this.type = type;
+		this.data = data;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
 }
