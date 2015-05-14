@@ -1,17 +1,18 @@
 package Server;
 
 public class ProfileWriteReq {
-	private String screen_name;
+	private int user_id;
 	private String name;
 	private String gender;
 	private String country;
 	private String job;
 	private String profile_img;
-	public String getScreen_name() {
-		return screen_name;
+	
+	public int getUser_id() {
+		return user_id;
 	}
-	public void setScreen_name(String screen_name) {
-		this.screen_name = screen_name;
+	public void setUser_id(int user_id) {
+		this.user_id = user_id;
 	}
 	public String getName() {
 		return name;

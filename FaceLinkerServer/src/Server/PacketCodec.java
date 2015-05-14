@@ -1,9 +1,47 @@
 package Server;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Scanner;
 
 public class PacketCodec {
+	public static String read_delim(BufferedReader in) throws IOException{
+		char charBuf[] = new char[1];
+		String readMsg = "";
+		short isdelim = 0;
+		
+		// read character before read delimiter
+		while(in.read(charBuf, 0, 1) != -1){
+			// Packet.PK_DELIM == '\n'
+			if(charBuf[0] == '?'){
+				readMsg += charBuf[0];
+				isdelim = 1;
+				break;
+			} else {
+				readMsg += charBuf[0];
+				continue;
+			}
+		}
+		
+		// if there isn't delimiter
+		if(isdelim == 0 && charBuf[0]  != '\0'){
+			System.out.println("MSG DELIM IS NOT FOUND!!");
+		}
+		return readMsg;
+	}
+	
+	public static Packet decode_Header(String src) throws IOException{
+		String type, data;
+		Scanner s = new Scanner(src).useDelimiter(Packet.FIELD_DELIM);
+		
+		type = s.next();
+		s.useDelimiter(Packet.PK_DELIM);
+		s.skip(Packet.FIELD_DELIM);
+		
+		data = s.next();
+		
+		return new Packet(type, data);
+	}
 	// About join request
 	// Dncode join request packet data
 	public String encode_JoinReq(JoinReq pk_data){
@@ -30,6 +68,7 @@ public class PacketCodec {
 	public String encode_JoinAck(JoinAck pk_data){
 		String data = Packet.PK_JOIN_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
+				+ Integer.toString(pk_data.getUser_id()) + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
 		
 		return data;
@@ -41,6 +80,7 @@ public class PacketCodec {
 		JoinAck dst = new JoinAck();
 		
 		dst.setResult(Integer.parseInt(s.next()));
+		dst.setUser_id(Integer.parseInt(s.next()));
 		
 		return dst;
 	}
@@ -49,7 +89,7 @@ public class PacketCodec {
 	// Encode profile write request packet data
 	public String encode_ProfileWriteReq(ProfileWriteReq pk_data){
 		String data = Packet.PK_PRO_WRITE_REQ + Packet.FIELD_DELIM
-				+ pk_data.getScreen_name() + Packet.FIELD_DELIM
+				+ Integer.toString(pk_data.getUser_id()) + Packet.FIELD_DELIM
 				+ pk_data.getName() + Packet.FIELD_DELIM
 				+ pk_data.getGender() + Packet.FIELD_DELIM
 				+ pk_data.getJob() + Packet.FIELD_DELIM
@@ -64,7 +104,7 @@ public class PacketCodec {
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ProfileWriteReq dst = new ProfileWriteReq();
 		
-		dst.setScreen_name(s.next());
+		dst.setUser_id(s.nextInt());
 		dst.setName(s.next());
 		dst.setGender(s.next());
 		dst.setJob(s.next());

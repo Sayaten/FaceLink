@@ -10,15 +10,20 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class Database {
-	Connection con = null;
-	Statement st = null;
-	ResultSet rs = null;
+	private static final int UPDATE = 0x01;
+	private static final int QUERY = 0x02;
+	
+	Connection con;
+	Statement st;
+	ResultSet rs;
 	
 	public Database(){
-		
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
 	}
 	
-	public boolean Connect(){
+	public boolean connect(){
 		try{
 			con = DriverManager.getConnection("jdbc::mysql://localhost","root","FLDatabaseRoot123");
 			st = con.createStatement();
@@ -30,8 +35,12 @@ public class Database {
 		return true;
 	}
 	
+	public Statement getStatement(){
+		return st;
+	}
+	
 	// Key == column, value == data
-	public boolean Update(String table, HashMap<String, String> data, String condition){
+	public boolean update(String table, HashMap<String, String> data, String condition){
 		String query = "update "+table+" set ";
 		Set<String> keys = data.keySet();
 		Iterator<String> iter = keys.iterator();
@@ -52,7 +61,7 @@ public class Database {
 		return true;
 	}
 	
-	public boolean Insert(String table, HashMap<String, String> data){
+	public boolean insert(String table, HashMap<String, String> data){
 		String query = "insert into "+table+"(";
 		Set<String> keys = data.keySet();
 		Iterator<String> iter = keys.iterator();
@@ -93,4 +102,38 @@ public class Database {
 		return true;
 	}
 	
+	public HashMap<String, Object> select(String table, String[] columns, String condition){
+		String query = "select ";
+		HashMap<String, Object> result = new HashMap<String, Object>();
+		ResultSet res;
+		
+		for(int i = 1 ; i <= columns.length ; ++i){
+			query += columns[i];
+			if(i != columns.length) query += ",";
+		}
+		query += " from " + table;
+		if( condition != null ) query += " where " + condition;
+		try{
+			res = st.executeQuery(query);
+			for(String column : columns){
+				result.put(column, res.getObject(column));
+			}
+		}catch(SQLException e){
+			System.out.println("SQLException: " + e.getMessage());
+			System.out.println("SQLState: " + e.getSQLState());
+			System.out.println("Query: " + query);
+			return null;
+		}
+		return result;
+	}
+	
+	public void printError(SQLException e, String query){
+		System.out.println("SQLException: " + e.getMessage());
+		System.out.println("SQLState: " + e.getSQLState());
+		System.out.println("Query: " + query);
+	}
+	
+	//public HashMap<String, Object> execute(){
+	//s	
+	//}
 }
