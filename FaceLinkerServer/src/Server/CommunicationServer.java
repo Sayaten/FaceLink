@@ -57,7 +57,6 @@ public class CommunicationServer {
 	}
 	
 	public static void handler(Packet src, PrintWriter out) throws IOException{
-		PacketCodec codec = new PacketCodec();
 		Database db = new Database();
 		byte[] BS_res = null;
 		String query = "";
@@ -70,7 +69,7 @@ public class CommunicationServer {
 		System.out.println("Packet Data: "+src.getData());
 		switch(src.getType()){
 			case Packet.PK_JOIN_REQ:
-				JoinReq JR_data = codec.decode_JoinReq(src.getData());
+				JoinReq JR_data = PacketCodec.decode_JoinReq(src.getData());
 				query = "insert into login_data(screen_name, password) "
 						+ "values('"+JR_data.getScreen_name()+"','"+JR_data.getPassword()+"');";
 				try{
@@ -79,7 +78,7 @@ public class CommunicationServer {
 					db.printError(e, query);
 				}
 				JoinAck joinack = new JoinAck(Packet.JR_SUCCESS);
-				output = codec.encode_JoinAck(joinack);
+				output = PacketCodec.encode_JoinAck(joinack);
 				try{ 
 					out.println(output);
 				}catch(Exception e){
@@ -89,7 +88,7 @@ public class CommunicationServer {
 				}
 				break;
 			case Packet.PK_PRO_WRITE_REQ:
-				ProfileWriteReq PWR_data = codec.decode_ProfileWriteReq(src.getData());
+				ProfileWriteReq PWR_data = PacketCodec.decode_ProfileWriteReq(src.getData());
 				int user_id = 0;
 				
 				query = "select user_id from login_data "
@@ -117,7 +116,7 @@ public class CommunicationServer {
 					db.printError(e, query);
 				}
 				ProfileWriteAck pwrack = new ProfileWriteAck(Packet.PWR_SUCCESS);
-				output = codec.encode_ProfileWriteAck(pwrack);try{ 
+				output = PacketCodec.encode_ProfileWriteAck(pwrack);try{ 
 				out.println(output);
 				}catch(Exception e){
 					e.printStackTrace();

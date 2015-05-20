@@ -3,10 +3,10 @@ package Server;
 public class JoinAck {
 	private int result;
 	
-	JoinAck(){
+	public JoinAck(){
 		
 	}
-	JoinAck(int result){
+	public JoinAck(int result){
 		this.result = result;
 	}
 
