@@ -2,6 +2,7 @@ package Server;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,11 +17,13 @@ public class Database {
 	Connection con;
 	Statement st;
 	ResultSet rs;
+	PreparedStatement pstmt;
 	
 	public Database(){
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
+		pstmt = null;
 	}
 	
 	public boolean connect(){
@@ -37,6 +40,22 @@ public class Database {
 	
 	public Statement getStatement(){
 		return st;
+	}
+	
+	public Connection getConnection(){
+		return con;
+	}
+	
+	public void setPreparedStatement(String query){
+		try{
+			pstmt = con.prepareStatement(query);
+		}catch(SQLException e){
+			printError(e, query);
+		}
+	}
+	
+	public PreparedStatement getPreparedStatement(){
+		return pstmt;
 	}
 	
 	// Key == column, value == data

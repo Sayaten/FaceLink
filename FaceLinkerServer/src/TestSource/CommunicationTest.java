@@ -28,7 +28,7 @@ public class CommunicationTest{
 			String inputLine = "";
 			while (true) {
 				inputLine = in.readLine();
-			
+				System.out.println(inputLine);
 				if (inputLine.equals("quit"))
 					break;
 			}

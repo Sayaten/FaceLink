@@ -68,7 +68,6 @@ public class PacketCodec {
 	public String encode_JoinAck(JoinAck pk_data){
 		String data = Packet.PK_JOIN_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
-				+ Integer.toString(pk_data.getUser_id()) + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
 		
 		return data;
@@ -80,7 +79,6 @@ public class PacketCodec {
 		JoinAck dst = new JoinAck();
 		
 		dst.setResult(Integer.parseInt(s.next()));
-		dst.setUser_id(Integer.parseInt(s.next()));
 		
 		return dst;
 	}
@@ -89,7 +87,7 @@ public class PacketCodec {
 	// Encode profile write request packet data
 	public String encode_ProfileWriteReq(ProfileWriteReq pk_data){
 		String data = Packet.PK_PRO_WRITE_REQ + Packet.FIELD_DELIM
-				+ Integer.toString(pk_data.getUser_id()) + Packet.FIELD_DELIM
+				+ pk_data.getScreen_name() + Packet.FIELD_DELIM
 				+ pk_data.getName() + Packet.FIELD_DELIM
 				+ pk_data.getGender() + Packet.FIELD_DELIM
 				+ pk_data.getJob() + Packet.FIELD_DELIM
@@ -104,7 +102,7 @@ public class PacketCodec {
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ProfileWriteReq dst = new ProfileWriteReq();
 		
-		dst.setUser_id(s.nextInt());
+		dst.setScreen_name(s.next());
 		dst.setName(s.next());
 		dst.setGender(s.next());
 		dst.setJob(s.next());
