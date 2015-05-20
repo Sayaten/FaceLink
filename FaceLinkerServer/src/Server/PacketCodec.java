@@ -32,12 +32,12 @@ public class PacketCodec {
 	
 	public static Packet decode_Header(String src) throws IOException{
 		String type, data;
-		Scanner s = new Scanner(src).useDelimiter(Packet.FIELD_DELIM);
+		Scanner s = new Scanner(src).useDelimiter("\\"+Packet.FIELD_DELIM);
 		
 		type = s.next();
-		s.useDelimiter(Packet.PK_DELIM);
 		s.skip(Packet.FIELD_DELIM);
 		
+		s.useDelimiter("\\"+Packet.PK_DELIM);
 		data = s.next();
 		
 		return new Packet(type, data);
@@ -125,7 +125,7 @@ public class PacketCodec {
 	
 	// Encode profile write response packet data
 	public ProfileWriteAck decode_ProfileWriteAck(String pk_data){
-		Scanner s = new Scanner(pk_data).useDelimiter(Packet.FIELD_DELIM);
+		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ProfileWriteAck dst = new ProfileWriteAck();
 		
 		dst.setResult(Integer.parseInt(s.next()));
