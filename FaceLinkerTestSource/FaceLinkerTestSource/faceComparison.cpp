@@ -87,6 +87,12 @@ void compareWithOneSample(char* sample)
 		std::cout<<"============= Input Sample is Bad ============"<<std::endl<<std::endl;
 		return;
 	}
+	result = FSDK_GetFaceTemplateInRegion(imgOrg, &fpOrg, &ftOrg);
+	if(result != FSDKE_OK)
+	{
+		std::cout<<"============= Input Sample is Bad ============"<<std::endl<<std::endl;
+		return;
+	}
 
 	for(int i = 1 ; i < nFile ; ++i)
 	{
