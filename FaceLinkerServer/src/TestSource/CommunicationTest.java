@@ -72,4 +72,50 @@ public class CommunicationTest{
 			e.printStackTrace();
 		}
 	}
+	
+/*
+ * no threading server
+ * 
+	public static void main(String[] args) throws IOException{
+		ServerSocket serverSocket = null;
+		Socket clientSocket = null;
+		PrintWriter out = null;
+		BufferedReader in = null;
+		
+		String inputData;
+		Packet rec_packet;
+		
+		while(true)
+		{
+			inputData = "";
+			// 9193 9194 9195
+			serverSocket = new ServerSocket(9193);
+			serverSocket.setReuseAddress(true);
+
+			// client connect and receive data
+			try {
+				clientSocket = serverSocket.accept();
+				System.out.println("Client Connect");
+				in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+				out = new PrintWriter(clientSocket.getOutputStream(), true);
+				
+				while (true) {
+					inputData = PacketCodec.read_delim(in);
+					if (inputData.charAt(inputData.length() - 1) == '?') break;
+				}
+				//inputData.replace('?', '\0');
+				rec_packet = PacketCodec.decode_Header(inputData);
+				
+				handler(rec_packet, out);	
+				
+				in.close();
+				out.close();
+				clientSocket.close();
+				serverSocket.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}	
+	}
+	*/
 }

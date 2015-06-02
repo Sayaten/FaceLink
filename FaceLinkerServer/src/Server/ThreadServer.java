@@ -10,63 +10,59 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-public class CommunicationServer {
-	static Base64Codec bs64 = new Base64Codec();
-	public static void main(String[] args) throws IOException{
-		ServerSocket serverSocket = null;
-		Socket clientSocket = null;
-		PrintWriter out = null;
-		BufferedReader in = null;
-		
-		String inputData;
-		Packet rec_packet;
-		
-		while(true)
-		{
-			inputData = "";
-			// 9193 9194 9195
-			serverSocket = new ServerSocket(9193);
-			serverSocket.setReuseAddress(true);
+public class ThreadServer implements Runnable {
+	private Base64Codec bs64 = new Base64Codec();
+	private Socket clientSocket = null;
+	private PrintWriter out = null;
+	private BufferedReader in = null;
+	
+	String inputData;
+	Packet rec_packet;
+	
+	public ThreadServer(Socket clientSocket) throws IOException{
+		this.clientSocket = clientSocket;
+			
+		inputData = "";
 
-			// client connect and receive data
-			try {
-				clientSocket = serverSocket.accept();
-				System.out.println("Client Connect");
-				in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-				out = new PrintWriter(clientSocket.getOutputStream(), true);
-				
-				while (true) {
-					inputData = PacketCodec.read_delim(in);
-					if (inputData.charAt(inputData.length() - 1) == '?') break;
-				}
-				//inputData.replace('?', '\0');
-				rec_packet = PacketCodec.decode_Header(inputData);
-				
-				handler(rec_packet, out);	
-				
-				in.close();
-				out.close();
-				clientSocket.close();
-				serverSocket.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		
+		System.out.println("Client Connect");
+		in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		out = new PrintWriter(clientSocket.getOutputStream(), true);
 	}
 	
-	public static void handler(Packet src, PrintWriter out) throws IOException{
+	public void run(){
+		try{
+			while (true) {
+				inputData = PacketCodec.read_delim(in);
+				if (inputData.charAt(inputData.length() - 1) == '?')
+					break;
+			}
+
+			rec_packet = PacketCodec.decode_Header(inputData);
+
+			handler(rec_packet, out);
+			
+			in.close();
+			out.close();
+			clientSocket.close();
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void handler(Packet src, PrintWriter out) throws IOException{
 		Database db = new Database();
 		byte[] BS_res = null;
 		String query = "";
 		String output = "";
+		
 		if(!db.connect()){
 			System.out.println("DB Error!!");
 			return;
 		}
+		
 		System.out.println("Packet Type: "+src.getType());
 		System.out.println("Packet Data: "+src.getData());
+
 		switch(src.getType()){
 			case Packet.PK_JOIN_REQ:
 				JoinReq JR_data = PacketCodec.decode_JoinReq(src.getData());
