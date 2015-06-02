@@ -1,4 +1,4 @@
-package TestSource;
+package Server;
 
 import Luxand.*; 
 import Luxand.FSDK.FSDK_FaceTemplate;
@@ -12,8 +12,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.sun.jna.Structure;
-
-import Server.LuxandKey;
 
 public class ComparisonSimilarity {
 	private static final String[] ERRORCODE = 
