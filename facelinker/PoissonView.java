@@ -1,4 +1,4 @@
-package com.example.android.poisson;
+package com.rubicom.facelinker;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,37 +6,33 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 
 /**
- * Created by MIKAEL on 2015-06-03.
+ * Created by MIKAEL on 2015-06-04.
  */
 public class PoissonView extends View {
-    public PoissonView(Context context) {
-        super(context);
-    }
-    public PoissonView(Context context, AttributeSet attrs, int defStyle)
-    {   super(context, attrs, defStyle);    }
+
+    public PoissonView(Context context)
+    {    super(context);    }
 
     public PoissonView(Context context, AttributeSet attrs)
     {   super(context, attrs);  }
 
+    public PoissonView(Context context, AttributeSet attrs, int defStyle)
+    {   super(context, attrs, defStyle);    }
 
     private Bitmap bitmap1, bitmap2, c_bitmap1, c_bitmap2;
+    private Canvas canvas;
 
     //Display parameters
     public static int Width = 1200;
     public static int Height = 800;
-    private Canvas canvas;
     //Program state
     public static final int NOTHING = 0;
     public static final int SELECTING = 1;
@@ -62,25 +58,27 @@ public class PoissonView extends View {
     //Matrix solver
     public MatrixSolver solver;
     public Thread blendingThread;
-//	public JProgressBar progressBar;
 
+    public Bitmap TEMP_BITMAP;
     //-2 for uninvolved pixels
     //-1 for border pixels
     //Index number for area pixels
     //This function also moves everything over by (dx, dy)
-    public void init() {
+
+    public void init( Bitmap receivedBitmap1, Bitmap receivedBitmap2 ) {
+
         selectionArea = new ArrayList<Coord>();
         selectionBorder = new ArrayList<Coord>();
-        bitmap1 = BitmapFactory.decodeResource( getResources(), R.drawable.tttt_shape );
-        bitmap2 = BitmapFactory.decodeResource( getResources(), R.drawable.ttt_mouth );
+        bitmap1 = receivedBitmap1;
+        bitmap2 = receivedBitmap2;
         c_bitmap1 = bitmap1.copy( Bitmap.Config.ARGB_8888, true );
         c_bitmap2 = bitmap2.copy( Bitmap.Config.ARGB_8888, true );
 
         Width = c_bitmap1.getWidth();
         Height = c_bitmap1.getHeight();
 
-        xStart = Width / 2;
-        yStart = Height / 2;
+        xStart = Width / 3;
+        yStart = Height / 3;
 
         mask = new int[Width][Height];
         for (int x = 0; x < Width; x++) {
@@ -90,21 +88,28 @@ public class PoissonView extends View {
 
         dx = 0;
         dy = 0;
+
+        invalidate();
     }
 
+    public Bitmap capture() {
+        this.buildDrawingCache();
+        TEMP_BITMAP = this.getDrawingCache();
+        return TEMP_BITMAP;
+    }
 
     @Override
     protected void onDraw( Canvas canvas ) {
-        super.onDraw(canvas);
 
+        super.onDraw(canvas);
         this.canvas = canvas;
 
         canvas.drawBitmap(c_bitmap1, 0, 0, null);
-        canvas.drawBitmap(c_bitmap2, xStart, Height / 2, null );
+        canvas.drawBitmap(c_bitmap2, xStart, yStart, null );
 
         Paint paint = new Paint();
         paint.setColor(Color.RED);
-        paint.setStrokeWidth(3.0F);
+        paint.setStrokeWidth(1.0F);
 
         if (state == SELECTING || state == DRAGGING) {
             for (int i = 0; i < selectionBorder.size(); i++) {
@@ -112,10 +117,50 @@ public class PoissonView extends View {
                 //float y = selectionBorder.get(i).y + dy;
                 float x = selectionBorder.get(i).x;
                 float y = selectionBorder.get(i).y;
-                canvas.drawPoint( x, y, paint );
+//                canvas.drawPoint( x, y, paint );
                 invalidate();
             }
         }
+
+    }
+
+
+    public void onUp() {
+        yStart -= 5;
+        if( yStart < 0 )
+            yStart += 5;
+        invalidate();
+    }
+
+    public void onDown() {
+        yStart += 5;
+        if( yStart > Height )
+            yStart -= 5;
+        invalidate();
+    }
+
+    public void onRight() {
+        xStart += 5;
+        if( xStart > Width )
+            xStart -= 5;
+        invalidate();
+    }
+
+    public void onLeft() {
+        xStart -= 5;
+        if( xStart < 0)
+            xStart += 5;
+        invalidate();
+    }
+
+    public void onMerge() {
+        blend();
+    }
+
+    Bitmap onTempShow() {
+        this.buildDrawingCache();
+        Bitmap TEMP_BITMAP = this.getDrawingCache();
+        return TEMP_BITMAP;
     }
 
     void updateMask() {
@@ -135,6 +180,7 @@ public class PoissonView extends View {
             for (int y = 0; y < Height; y++)
                 mask[x][y] = -2;
         }
+
         for (int i = 0; i < selectionBorder.size(); i++) {
             int x = selectionBorder.get(i).x;
             int y = selectionBorder.get(i).y;
@@ -142,6 +188,7 @@ public class PoissonView extends View {
             //int y = selectionBorder.get(i).y + dy;
             //selectionBorder.get(i).x = x;
             //selectionBorder.get(i).y = y;
+
             mask[x][y] = -1;
         }
         for (int i = 0; i < selectionArea.size(); i++) {
@@ -213,9 +260,10 @@ public class PoissonView extends View {
 
         //Find a pixel outside of the bounding box, which is guaranteed
         //to be outside of the selection
+
         boolean found = false;
-        for (int x = 0; x < c_bitmap2.getWidth() && !found; x++) {
-            for (int y = 0; y < c_bitmap2.getHeight() && !found; y++) {
+        for (int x = xStart; x < c_bitmap2.getWidth() && !found; x++) {
+            for (int y = yStart; y < c_bitmap2.getHeight() && !found; y++) {
                 if ((x < xMin || x > xMax) && (y < yMin || y > yMax)) {
                     found = true;
                     fillOutside(x, y);
@@ -242,12 +290,13 @@ public class PoissonView extends View {
             }
         }
 */
-        for (int x = xStart ; x< bitmap2.getWidth() + xStart ; ++x){
-            for (int y = yStart ; y< bitmap2.getWidth() + xStart ; ++y){
+        for (int x = xStart  ; x< bitmap2.getWidth() + xStart; ++x){
+            for (int y = yStart  ; y< bitmap2.getHeight() + yStart ; ++y){
                 if (mask[x][y] == 0) {
                     mask[x][y] = -2;
                 }
                 else if (mask[x][y] != -1) {
+
                     mask[x][y] = selectionArea.size();//Make mask index of this coord
                     selectionArea.add(new Coord(x, y));
                 }
@@ -256,56 +305,88 @@ public class PoissonView extends View {
         updateMask();
     }
 
+    public void catching() {
+        int x = xStart-1;
+        int y = yStart-1;
+
+        state = SELECTING;
+        if (state == SELECTING) {
+            while(x <= c_bitmap2.getWidth() + xStart){
+                selectionBorder.add(new Coord(x, y));
+                x += 10;
+            }
+            if(x > c_bitmap2.getWidth() + xStart){
+                x = c_bitmap2.getWidth() + xStart;
+            }
+
+            while(y <= yStart + c_bitmap2.getHeight()){
+                selectionBorder.add(new Coord(x,y));
+                y += 10;
+            }
+            if(y > yStart + c_bitmap2.getHeight()){
+                y = yStart + c_bitmap2.getHeight();
+            }
+
+            while(x >= xStart){
+                selectionBorder.add(new Coord(x, y));
+                x -= 10;
+            }
+            if(x < xStart){
+                x = xStart-1;
+            }
+
+            while(y >= yStart){
+                selectionBorder.add(new Coord(x,y));
+                y -= 10;
+            }
+            if(y < yStart){
+                y = yStart-1;
+            }
+        }
+        lastX = x;
+        lastY = y;
+
+        invalidate();
+
+        int N = selectionBorder.size();
+        if (N == 0 || (state != SELECTING && state != DRAGGING))
+            return;
+
+        if (state == SELECTING) {
+            for (int n = 0; n < N; n++) {
+                int startx = selectionBorder.get(n).x;
+                int starty = selectionBorder.get(n).y;
+                int totalDX = selectionBorder.get((n+1)%N).x - startx;
+                int totalDY = selectionBorder.get((n+1)%N).y - starty;
+                int numAdded = Math.abs(totalDX) + Math.abs(totalDY);
+                for (int t = 0; t < numAdded; t++) {
+                    double frac = (double)t / (double)numAdded;
+                    int x2 = (int)Math.round(frac*totalDX) + startx;
+                    int y2 = (int)Math.round(frac*totalDY) + starty;
+                    selectionBorder.add(new Coord(x2, y2));
+                }
+            }
+            updateMask();
+            getSelectionArea();
+            state = DRAGGING;
+            dragValid = false;
+            dx = 0;
+            dy = 0;
+        }
+        else if (state == DRAGGING) {
+            dragValid = false;
+            updateMask();
+        }
+
+    }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            //int x = x;
-            //int y = Height / 2;
-            int x = xStart;
-            int y = yStart;
-            if (state == SELECTING) {
-                while(x <= c_bitmap2.getWidth() + xStart){
-                    selectionBorder.add(new Coord(x, y));
-                    x += 10;
-                }
-                if(x > c_bitmap2.getWidth() + xStart){
-                    x = c_bitmap2.getWidth() + xStart;
-                }
-
-                while(y <= yStart + c_bitmap2.getHeight()){
-                    selectionBorder.add(new Coord(x,y));
-                    y += 10;
-                }
-                if(y > yStart + c_bitmap2.getHeight()){
-                    y = yStart + c_bitmap2.getHeight();
-                }
-
-                while(x >= xStart){
-                    selectionBorder.add(new Coord(x, y));
-                    x -= 10;
-                }
-                if(x < xStart){
-                    x = xStart;
-                }
-
-                while(y >= yStart){
-                    selectionBorder.add(new Coord(x,y));
-                    y -= 10;
-                }
-                if(y < yStart){
-                    y = yStart;
-                }
-            }
-            lastX = x;
-            lastY = y;
-
-            invalidate();
-
-            state = SELECTING;
+            catching();
 
         }
-
+/*
         if(event.getAction() == MotionEvent.ACTION_UP) {
             int N = selectionBorder.size();
             if (N == 0 || (state != SELECTING && state != DRAGGING))
@@ -338,7 +419,7 @@ public class PoissonView extends View {
             }
         }
 
-
+*/
         return true;
     }
 
@@ -385,8 +466,17 @@ public class PoissonView extends View {
         updateMask();
         solver = new MatrixSolver(mask, selectionArea, c_bitmap1, c_bitmap2,
                 xStart, yStart, Width, Height, false);
+        Log.w("size: ", "" + selectionArea.size());
+
         IterationBlender blender = new IterationBlender();
+
+
         blendingThread = new Thread(blender);
         blendingThread.start();
+
+        while( state == BLENDING ) {
+
+        }
+        invalidate();
     }
 }

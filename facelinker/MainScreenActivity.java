@@ -2,51 +2,60 @@ package com.rubicom.facelinker;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import java.net.Socket;
 
 
 public class MainScreenActivity extends Activity {
 
- //   public void receiveSocket( SocketClass socketclass ) {
-  //      socketClass = socketclass;
-   // }
-
+    private String screen_id;
+    private Bitmap profile_image;
+    private ImageButton btnFind;
+    private ImageView smallProfile, bigProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main_screen);
 
+        smallProfile = ( ImageView )findViewById( R.id.imgSmallProfile );
+        bigProfile = ( ImageView )findViewById( R.id.imgBigProfile );
+        btnFind = (ImageButton)findViewById( R.id.btnFind );
+        btnFind.setOnClickListener( OnClickListener );
+
+        Intent intent = getIntent();
+        screen_id = intent.getExtras().getString("screen_id");
+        profile_image = (Bitmap)intent.getExtras().get("profile_image");
+
+        smallProfile.setImageBitmap( profile_image );
+        bigProfile.setImageBitmap( profile_image );
+
 
     }
 
+    public View.OnClickListener OnClickListener = new View.OnClickListener() {
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main_screen, menu);
-        return true;
-    }
+        public void onClick( View view ) {
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+            int id = view.getId();
+            switch( id ) {
+                case R.id.btnFind:
+                    Intent intent = new Intent( MainScreenActivity.this, PoissonActivity.class );
+                    startActivity( intent );
+                    break;
+            }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
         }
 
-        return super.onOptionsItemSelected(item);
-    }
+    };
 }

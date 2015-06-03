@@ -15,9 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import Server.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.Socket;
 
 
 public class SignupFirstActivity extends Activity {
@@ -34,7 +36,10 @@ public class SignupFirstActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup_first);
-
+/*
+        socketClass = new SocketClass();
+        socketClass.connect();
+*/
         enterAddress = ( EditText )findViewById( R.id.enterAddress );
         enterPassword = ( EditText )findViewById( R.id.enterPassword );
 
@@ -44,8 +49,6 @@ public class SignupFirstActivity extends Activity {
         joinReq = new JoinReq();
         packetCodec = new PacketCodec();
 
-        socketClass = new SocketClass();
-        socketClass.connect();
 
     }
 
@@ -75,6 +78,7 @@ public class SignupFirstActivity extends Activity {
     private View.OnClickListener OnClickListener = new View.OnClickListener() {
         public void onClick( View view ) {
             int id = view.getId();
+            Intent intent;
             switch( id ) {
                 case R.id.btnNext:
 
@@ -82,16 +86,33 @@ public class SignupFirstActivity extends Activity {
                     joinReq.setPassword( enterPassword.getText().toString() );
 
                     sendMsg = packetCodec.encode_JoinReq( joinReq );
-            //        socketClass.send( sendMsg );
 
                     Bitmap picture = BitmapFactory.decodeResource( getResources(), R.drawable.find );
-
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     picture.compress( Bitmap.CompressFormat.PNG, 100, baos );
                     byte [] toByte = baos.toByteArray();
                     String temp = Base64.encodeToString( toByte, Base64.DEFAULT );
-                    socketClass.send( temp + "?" );
+       //             socketClass.send( temp + "?" );
+
+       //             try {
+       //                 socketClass.send(sendMsg);
+       //                 socketClass.receive();
+                        intent = new Intent( SignupFirstActivity.this, SignupSecondActivity.class );
+                        intent.putExtra( "screen_id", enterAddress.getText().toString() );
+                        intent.putExtra( "password", enterPassword.getText().toString() );
+                        startActivity(intent);
+
+       //             } catch (IOException e) {
+       //                 e.printStackTrace();
+       //             }
+
+
+
+                    break;
+
+
                 default:
+                    break;
             }
         }
     };
