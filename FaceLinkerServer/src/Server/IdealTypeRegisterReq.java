@@ -1,8 +1,8 @@
 package Server;
 
-public class JoinReq {
+public class IdealTypeRegisterReq {
 	private String screen_name;
-	private String password;
+	private String ideal_type;
 	
 	public String getScreen_name() {
 		return screen_name;
@@ -10,12 +10,10 @@ public class JoinReq {
 	public void setScreen_name(String screen_name) {
 		this.screen_name = screen_name;
 	}
-	public String getPassword() {
-		return password;
+	public String getIdeal_type() {
+		return ideal_type;
 	}
-	public void setPassword(String password) {
-		this.password = password;
+	public void setIdeal_type(String ideal_type) {
+		this.ideal_type = ideal_type;
 	}
-	
-	
 }
