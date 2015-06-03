@@ -1,4 +1,4 @@
-package Server;
+package TestSource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +9,16 @@ import java.net.Socket;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
+
+import Server.Base64Codec;
+import Server.Database;
+import Server.ImageCodec;
+import Server.JoinAck;
+import Server.JoinReq;
+import Server.Packet;
+import Server.PacketCodec;
+import Server.ProfileWriteAck;
+import Server.ProfileWriteReq;
 
 public class CommunicationServer {
 	static Base64Codec bs64 = new Base64Codec();
