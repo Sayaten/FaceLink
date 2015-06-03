@@ -21,15 +21,15 @@ import java.util.ArrayList;
  * Created by MIKAEL on 2015-06-03.
  */
 public class PoissonView extends View {
-    public PoissonView(Context context) {
-        super(context);
-    }
-    public PoissonView(Context context, AttributeSet attrs, int defStyle)
-    {   super(context, attrs, defStyle);    }
+
+    public PoissonView(Context context)
+    {    super(context);    }
 
     public PoissonView(Context context, AttributeSet attrs)
     {   super(context, attrs);  }
 
+    public PoissonView(Context context, AttributeSet attrs, int defStyle)
+    {   super(context, attrs, defStyle);    }
 
     private Bitmap bitmap1, bitmap2, c_bitmap1, c_bitmap2;
 
@@ -79,8 +79,8 @@ public class PoissonView extends View {
         Width = c_bitmap1.getWidth();
         Height = c_bitmap1.getHeight();
 
-        xStart = Width / 2;
-        yStart = Height / 2;
+        xStart = Width / 3;
+        yStart = Height / 3;
 
         mask = new int[Width][Height];
         for (int x = 0; x < Width; x++) {
@@ -100,11 +100,11 @@ public class PoissonView extends View {
         this.canvas = canvas;
 
         canvas.drawBitmap(c_bitmap1, 0, 0, null);
-        canvas.drawBitmap(c_bitmap2, xStart, Height / 2, null );
+        canvas.drawBitmap(c_bitmap2, xStart, yStart, null );
 
         Paint paint = new Paint();
         paint.setColor(Color.RED);
-        paint.setStrokeWidth(3.0F);
+        paint.setStrokeWidth(1.0F);
 
         if (state == SELECTING || state == DRAGGING) {
             for (int i = 0; i < selectionBorder.size(); i++) {
@@ -135,6 +135,7 @@ public class PoissonView extends View {
             for (int y = 0; y < Height; y++)
                 mask[x][y] = -2;
         }
+
         for (int i = 0; i < selectionBorder.size(); i++) {
             int x = selectionBorder.get(i).x;
             int y = selectionBorder.get(i).y;
@@ -142,6 +143,7 @@ public class PoissonView extends View {
             //int y = selectionBorder.get(i).y + dy;
             //selectionBorder.get(i).x = x;
             //selectionBorder.get(i).y = y;
+
             mask[x][y] = -1;
         }
         for (int i = 0; i < selectionArea.size(); i++) {
@@ -214,8 +216,8 @@ public class PoissonView extends View {
         //Find a pixel outside of the bounding box, which is guaranteed
         //to be outside of the selection
         boolean found = false;
-        for (int x = 0; x < c_bitmap2.getWidth() && !found; x++) {
-            for (int y = 0; y < c_bitmap2.getHeight() && !found; y++) {
+        for (int x = xStart; x < c_bitmap2.getWidth() && !found; x++) {
+            for (int y = yStart; y < c_bitmap2.getHeight() && !found; y++) {
                 if ((x < xMin || x > xMax) && (y < yMin || y > yMax)) {
                     found = true;
                     fillOutside(x, y);
@@ -242,12 +244,13 @@ public class PoissonView extends View {
             }
         }
 */
-        for (int x = xStart ; x< bitmap2.getWidth() + xStart ; ++x){
-            for (int y = yStart ; y< bitmap2.getWidth() + xStart ; ++y){
+        for (int x = xStart  ; x< bitmap2.getWidth() + xStart; ++x){
+            for (int y = yStart  ; y< bitmap2.getHeight() + yStart ; ++y){
                 if (mask[x][y] == 0) {
                     mask[x][y] = -2;
                 }
                 else if (mask[x][y] != -1) {
+
                     mask[x][y] = selectionArea.size();//Make mask index of this coord
                     selectionArea.add(new Coord(x, y));
                 }
@@ -262,8 +265,8 @@ public class PoissonView extends View {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             //int x = x;
             //int y = Height / 2;
-            int x = xStart;
-            int y = yStart;
+            int x = xStart-1;
+            int y = yStart-1;
             if (state == SELECTING) {
                 while(x <= c_bitmap2.getWidth() + xStart){
                     selectionBorder.add(new Coord(x, y));
@@ -286,7 +289,7 @@ public class PoissonView extends View {
                     x -= 10;
                 }
                 if(x < xStart){
-                    x = xStart;
+                    x = xStart-1;
                 }
 
                 while(y >= yStart){
@@ -294,7 +297,7 @@ public class PoissonView extends View {
                     y -= 10;
                 }
                 if(y < yStart){
-                    y = yStart;
+                    y = yStart-1;
                 }
             }
             lastX = x;
@@ -385,6 +388,7 @@ public class PoissonView extends View {
         updateMask();
         solver = new MatrixSolver(mask, selectionArea, c_bitmap1, c_bitmap2,
                 xStart, yStart, Width, Height, false);
+        Log.w("size: ","" + selectionArea.size());
         IterationBlender blender = new IterationBlender();
         blendingThread = new Thread(blender);
         blendingThread.start();
