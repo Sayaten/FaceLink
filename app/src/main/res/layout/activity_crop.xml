@@ -1,0 +1,78 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width = "fill_parent"
+    android:layout_height = "fill_parent"
+    android:layout_weight = "1"
+    android:background = "#00FFFF"
+    android:gravity = "center"
+    android:orientation = "vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.3"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="Pleas select your eyes, nose, and mouth\nin your profile image."
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.1"
+            android:textColor = "#FFFFFF"
+            android:textStyle="bold"
+            android:gravity = "center|bottom" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.7">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.5"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="210dp"
+                android:id="@+id/imageButton">
+            </ImageView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.5"
+            android:gravity="center|top"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:id="@+id/imageButton2"
+                android:background="#4F81BD"
+                android:layout_marginBottom="10dp" />
+
+            <ImageButton
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:id="@+id/imageButton3"
+                android:background="#4F81BD"
+                android:layout_marginBottom="10dp" />
+
+            <ImageButton
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:id="@+id/imageButton4"
+                android:background="#4F81BD"
+                android:adjustViewBounds="false" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

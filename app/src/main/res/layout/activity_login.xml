@@ -1,0 +1,94 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width = "fill_parent"
+    android:layout_height = "fill_parent"
+    android:layout_weight = "1"
+    android:background = "#00FFFF"
+    android:gravity = "center"
+    android:orientation = "vertical">
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.45"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="FACE\nLINKER"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.1"
+            android:textColor = "#FFFFFF"
+            android:textStyle="bold"
+            android:gravity = "center|bottom"
+            android:textSize="45dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.55"
+        android:gravity="center|top"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/editAddress"
+            android:layout_width = "fill_parent"
+            android:layout_height= "wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft = "10dp"
+            android:layout_marginRight = "10dp"
+            android:gravity = "center"
+            android:singleLine="true"
+            android:maxLength="30">
+        </EditText>
+
+        <EditText
+            android:id="@+id/editPassword"
+            android:layout_width = "fill_parent"
+            android:layout_height= "wrap_content"
+            android:layout_marginBottom = "15dp"
+            android:layout_marginLeft = "10dp"
+            android:layout_marginRight = "10dp"
+            android:gravity = "center"
+            android:password="true"
+            android:singleLine="true"
+            android:imeOptions="actionDone"
+            android:maxLength="30">
+        </EditText>
+
+        <Button
+            android:id="@+id/btnAccess"
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_marginBottom = "10dp"
+            android:layout_marginLeft = "10dp"
+            android:layout_marginRight = "10dp"
+            android:textColor = "#FFFFFF"
+            android:textStyle="bold"
+            android:text = "ACCESS"
+            android:gravity = "center"
+            android:background="#4F81BD"/>
+
+        <Button
+            android:id="@+id/btnSignUp"
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_marginBottom = "30dp"
+            android:layout_marginLeft = "10dp"
+            android:layout_marginRight = "10dp"
+            android:textColor = "#FFFFFF"
+            android:textStyle="bold"
+            android:text = "SIGN UP"
+            android:gravity = "center"
+            android:background="#4F81BD"/>
+
+    </LinearLayout>
+
+
+
+
+
+</LinearLayout>
