@@ -1,0 +1,127 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width = "fill_parent"
+    android:layout_height = "fill_parent"
+    android:layout_weight = "1"
+    android:background = "#00FFFF"
+    android:gravity = "center"
+    android:orientation = "vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.3"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="Please enter your name, gender, job, country,\nand select your profile image."
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.1"
+            android:textColor = "#FFFFFF"
+            android:textStyle="bold"
+            android:gravity = "center|bottom" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="0px"
+        android:layout_weight="0.7">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.5"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:layout_width="fill_parent"
+                android:layout_height="210dp"
+                android:id="@+id/imageButton"
+                android:background="#4F81BD"></ImageButton>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.5"
+            android:gravity="center|top"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/enterName"
+                android:layout_width = "fill_parent"
+                android:layout_height= "wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft = "10dp"
+                android:layout_marginRight = "10dp"
+                android:gravity = "center"
+                android:singleLine="true"
+                android:maxLength="30">
+            </EditText>
+
+            <RadioGroup
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MALE"
+                    android:id="@+id/radioMale"
+                    android:checked="false"
+                    android:textSize="10dp" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="FEMALE"
+                    android:id="@+id/radioFemale"
+                    android:checked="false"
+                    android:textSize="10dp" />
+            </RadioGroup>
+
+            <EditText
+                android:id="@+id/enterJob"
+                android:layout_width = "fill_parent"
+                android:layout_height= "wrap_content"
+                android:layout_marginLeft = "10dp"
+                android:layout_marginRight = "10dp"
+                android:gravity = "center"
+                android:singleLine="true"
+                android:maxLength="30">
+            </EditText>
+
+            <EditText
+                android:id="@+id/enterCountry"
+                android:layout_width = "fill_parent"
+                android:layout_height= "wrap_content"
+                android:layout_marginLeft = "10dp"
+                android:layout_marginRight = "10dp"
+                android:gravity = "center"
+                android:singleLine="true"
+                android:maxLength="30">
+            </EditText>
+
+            <Button
+                android:id="@+id/btnComplete"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom = "30dp"
+                android:layout_marginLeft = "10dp"
+                android:layout_marginRight = "10dp"
+                android:textColor = "#FFFFFF"
+                android:textStyle="bold"
+                android:text = "COMPLETE"
+                android:gravity = "center"
+                android:background="#4F81BD"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
