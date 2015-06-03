@@ -1,11 +1,12 @@
 package Server;
 
-public class ProfileWriteAck {
+public class IdealTypeRegisterAck {
 	private int result;
-	public ProfileWriteAck(){
+	
+	public IdealTypeRegisterAck(){
 		
 	}
-	public ProfileWriteAck(int result){
+	public IdealTypeRegisterAck(int result){
 		this.result = result;
 	}
 	public int getResult() {
@@ -15,4 +16,5 @@ public class ProfileWriteAck {
 	public void setResult(int result) {
 		this.result = result;
 	}
+
 }

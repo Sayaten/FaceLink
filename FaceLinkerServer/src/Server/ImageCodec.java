@@ -8,9 +8,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ImageCodec {
-	public static final String IMG_DIR = "/home/saya/Project/FLImages/";
-	public static void saveImage(byte[] data, String name){
-		File ofile = new File(IMG_DIR + name);
+	public static final String IMG_ROOT_DIR = "/home/saya/Project/FLImages/";
+	public static void saveImage(byte[] data, String dir, String name){
+		File ofile = new File(IMG_ROOT_DIR + dir + "/" + name);
 		FileOutputStream fos;
 		try {
 			fos = new FileOutputStream(ofile);
@@ -22,22 +22,21 @@ public class ImageCodec {
 			e.printStackTrace();
 		}
 	}
-	/*
-	public byte[] convertImageToBase64(String name){
-		byte[] result;
-		String fileString = new String();
-		FileInputStream fis = null;
-		ByteArrayOutputStream bos = null;
-		
+	
+	public static byte[] loadImageToByteArray(String dir, String name){
+		File ifile = new File(IMG_ROOT_DIR + dir + "/" + name);
+		FileInputStream fis;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		byte[] buf = new byte[1024];
+		int readbyte = 0;
 		try{
-			
+			fis = new FileInputStream(ifile);
+			while((readbyte = fis.read(buf)) != -1){
+				bos.write(buf, 0, readbyte);
+			}
 		}catch(IOException e){
-			
-		}finally{
-			fis.close();
-			bos.close();
+			e.printStackTrace();
 		}
-		return result;
+		return bos.toByteArray();
 	}
-	*/
 }

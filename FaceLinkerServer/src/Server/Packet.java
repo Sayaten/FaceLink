@@ -2,23 +2,42 @@ package Server;
 
 public class Packet {
 	// Message Type
+	// about join
 	public static final String PK_JOIN_REQ = "JOIN_REQ";
 	public static final String PK_JOIN_ACK = "JOIN_ACK";
 	
+	// about profile write
 	public static final String PK_PRO_WRITE_REQ = "PRO_WRITE_REQ";
 	public static final String PK_PRO_WRITE_ACK = "PRO_WRITE_ACK";
+
+	// about profile modify
+	public static final String PK_PRO_MODIFY_REQ = "PRO_MODIFY_REQ";
+	public static final String PK_PRO_MODIFY_ACK = "PRO_MODIFY_ACK";
 	
+	// about part register
+	public static final String PK_PART_REG_REQ = "PART_REGISTER_REQ";
+	public static final String PK_PART_REG_ACK = "PART_REGISTER_ACK";
+	
+	// about part get
+	public static final String PK_PART_GET_REQ = "PART_GET_REQ";
+	public static final String PK_PART_GET_ACK = "PART_GET_ACK";
+	
+	// about ideal type register
+	public static final String PK_IDEAL_REG_REQ = "IDEAL_REGISTER_REQ";
+	public static final String PK_IDEAL_REG_ACK = "IDEAL_REGISTER_ACK";
+	
+	// about ideal type search
+	public static final String PK_IDEAL_SCH_REQ = "IDEAL_SEARCH_REQ";
+	public static final String PK_IDEAL_SCH_ACK = "IDEAL_SEARCH_ACK";
+	
+	// about packet field delimiter
 	public static final String FIELD_DELIM = "|";
 	public static final String PK_DELIM = "?";
 	
 	// ACK Type
-	// About join request
-	public static final int JR_SUCCESS = 0x01;
-	public static final int JR_FAIL = 0x00;
+	public static final int SUCCESS = 0x01;
+	public static final int FAIL = 0x00;
 	
-	// About profile write request
-	public static final int PWR_SUCCESS = 0x03;
-	public static final int PWR_FAIL = 0x02;
 	
 	private String type;
 	private String data;
