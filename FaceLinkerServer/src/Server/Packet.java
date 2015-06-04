@@ -6,6 +6,10 @@ public class Packet {
 	public static final String PK_JOIN_REQ = "JOIN_REQ";
 	public static final String PK_JOIN_ACK = "JOIN_ACK";
 	
+	// about login
+	public static final String PK_LOGIN_REQ = "LOGIN_REQ";
+	public static final String PK_LOGIN_ACK = "LOGIN_ACK";
+	
 	// about profile write
 	public static final String PK_PRO_WRITE_REQ = "PRO_WRITE_REQ";
 	public static final String PK_PRO_WRITE_ACK = "PRO_WRITE_ACK";
@@ -29,6 +33,18 @@ public class Packet {
 	// about ideal type search
 	public static final String PK_IDEAL_SCH_REQ = "IDEAL_SEARCH_REQ";
 	public static final String PK_IDEAL_SCH_ACK = "IDEAL_SEARCH_ACK";
+	
+	// about Contact
+	public static final String PK_CONTACT_REQ = "CONTACT_REQ";
+	public static final String PK_CONTACT_ACK = "CONTACT_ACK";
+	
+	// about Contact reply
+	public static final String PK_CON_REPLY_REQ = "CONTACT_REPLY_REQ";
+	public static final String PK_CON_REPLY_ACK = "CONTACT_REPLY_ACK";
+	
+	// about get Contact
+	public static final String PK_GET_CON_REQ = "GET_CONTACT_REQ";
+	public static final String PK_GET_CON_ACK = "GET_CONTACT_ACK";
 	
 	// about packet field delimiter
 	public static final String FIELD_DELIM = "|";

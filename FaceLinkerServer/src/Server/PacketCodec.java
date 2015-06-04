@@ -84,6 +84,47 @@ public class PacketCodec {
 		return dst;
 	}
 	
+	// About login request
+	// Encode login request
+	public static String encode_LoginReq(LoginReq pk_data){
+		String data = Packet.PK_LOGIN_REQ + Packet.FIELD_DELIM
+				+ pk_data.getScreen_name() + Packet.FIELD_DELIM
+				+ pk_data.getPassword() + Packet.FIELD_DELIM
+				+ Packet.PK_DELIM;
+		
+		return data;
+	}
+	// Decode Login response packet data
+	public static LoginReq decode_LoginReq(String pk_data){
+		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
+		LoginReq dst = new LoginReq();
+	
+		dst.setScreen_name(s.next());
+		dst.setPassword(s.next());
+		
+		return dst;
+	}
+	
+	// About login ack
+	// Decode login response packet data
+	public static String encode_LoginAck(LoginAck pk_data){
+		String data = Packet.PK_LOGIN_ACK + Packet.FIELD_DELIM
+				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
+				+ Packet.PK_DELIM;
+		
+		return data;
+	}
+
+	// Decode login response packet data
+	public static LoginAck decode_LoginAck(String pk_data){
+		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
+		LoginAck dst = new LoginAck();
+		
+		dst.setResult(s.nextInt());
+		
+		return dst;
+	}
+	
 	// About profile write request
 	// Encode profile write request packet data
 	public static String encode_ProfileWriteReq(ProfileModifyReq pk_data){
@@ -358,4 +399,8 @@ public class PacketCodec {
 
 		return dst;
 	}	
+	
+	/*
+	 * Codec Contact
+	 */
 }
