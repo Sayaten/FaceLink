@@ -108,7 +108,7 @@ public class ThreadServer implements Runnable {
 				}
 				
 				LoginAck l_ack = new LoginAck();
-				if( password == null || password.compareTo(l_req.getPassword()) != 0){
+				if( password.compareTo("") == 0 || password.compareTo(l_req.getPassword()) != 0){
 					l_ack.setResult(Packet.FAIL);
 				}
 				else{

@@ -391,7 +391,7 @@ public class PacketCodec {
 	}
 	
 	// Encode profile modify response packet data
-	public static ProfileModifyAck ProfileModifyAck(String pk_data){
+	public static ProfileModifyAck decode_ProfileModifyAck(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ProfileModifyAck dst = new ProfileModifyAck();
 		
