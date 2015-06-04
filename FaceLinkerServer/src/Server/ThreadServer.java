@@ -73,7 +73,7 @@ public class ThreadServer implements Runnable {
 		}
 		
 		System.out.println("Packet Type: "+src.getType());
-		System.out.println("Packet Data: "+src.getData());
+		//System.out.println("Packet Data: "+src.getData());
 
 		switch(src.getType()){
 			case Packet.PK_JOIN_REQ:
