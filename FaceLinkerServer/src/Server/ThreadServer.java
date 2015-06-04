@@ -171,11 +171,11 @@ public class ThreadServer implements Runnable {
 					ImageCodec.saveImage(byte_image, "profile",profile_image);
 					query = "insert into user_data(user_id, name, gender, country, job) "
 							+ " values(" 
-							+ Integer.toString(user_id) + ", "
-							+ "' " + pw_req.getName() + "', "
-							+ "' " + pw_req.getGender() + "', "
-							+ "' " + pw_req.getCountry() + "', "
-							+ "' " + pw_req.getJob() + "')";
+							+ Integer.toString(user_id)
+							+ ",'" + pw_req.getName() + "' "
+							+ ",'" + pw_req.getGender() + "' "
+							+ ",'" + pw_req.getCountry() + "' "
+							+ ",'" + pw_req.getJob() + "')";
 					//db.setPreparedStatement(query);
 					//db.getPreparedStatement().setInt(1, user_id);
 					//db.getPreparedStatement().setString(2, pw_req.getName());
@@ -217,19 +217,28 @@ public class ThreadServer implements Runnable {
 						ImageCodec.saveImage(byte_image, "profile",profile_image);
 					}
 					
-					columns = "user_id"
-							+ ( (pm_req.getName() != null)   ? ",name" : "")
-							+ ( (pm_req.getGender() != null) ? ",gender" : "")
-							+ ( (pm_req.getJob() != null)    ? ",job" : "")
-							+ ( (pm_req.getCountry() != null)? ",country" : "");
-					column_data = Integer.toString(user_id)
+					//columns = "user_id"
+					//		+ ( (pm_req.getName() != null)   ? ",name" : "")
+					//		+ ( (pm_req.getGender() != null) ? ",gender" : "")
+					//		+ ( (pm_req.getJob() != null)    ? ",job" : "")
+					//		+ ( (pm_req.getCountry() != null)? ",country" : "");
+					//column_data = Integer.toString(user_id)
+					//		+ ( (pm_req.getName() != null)   ? ",'" + pm_req.getName() : "'")
+					//		+ ( (pm_req.getGender() != null) ? ",'" + pm_req.getGender() : "'")
+					//		+ ( (pm_req.getJob() != null)    ? ",'" + pm_req.getJob() : "'")
+					//		+ ( (pm_req.getCountry() != null)? ",'" + pm_req.getCountry() : "'");
+					
+					//query = "insert into user_data(" + columns + ") " + "values(" + column_data + ")";
+					query = "update user_data set "
+							+ ( (pm_req.getName() != null)   ? "name = " : "")
 							+ ( (pm_req.getName() != null)   ? "'" + pm_req.getName() : "'")
+							+ ( (pm_req.getGender() != null) ? ",gender = " : "")
 							+ ( (pm_req.getGender() != null) ? ",'" + pm_req.getGender() : "'")
+							+ ( (pm_req.getJob() != null)    ? ",job = " : "")
 							+ ( (pm_req.getJob() != null)    ? ",'" + pm_req.getJob() : "'")
-							+ ( (pm_req.getCountry() != null)? ",'" + pm_req.getCountry() : "'");
-					
-					query = "insert into user_data(" + columns + ") " + "values(" + column_data + ")";
-					
+							+ ( (pm_req.getCountry() != null)? ",country = " : "")
+							+ ( (pm_req.getCountry() != null)? ",'" + pm_req.getCountry() : "'")
+							+ " where user_id = " + Integer.toString(user_id);
 					db.getStatement().executeUpdate(query);
 				}catch(SQLException e){
 					db.printError(e, query);
