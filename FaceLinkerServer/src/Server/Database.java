@@ -28,7 +28,7 @@ public class Database {
 	
 	public boolean connect(){
 		try{
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FaceLinker","root","FLDatabaseRoot123");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FaceLinker","root", LuxandKey.DBKEY);
 			st = con.createStatement();
 		}catch(SQLException e){
 			System.out.println("SQLException: " + e.getMessage());
