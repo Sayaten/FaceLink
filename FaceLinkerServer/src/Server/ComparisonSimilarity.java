@@ -10,6 +10,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.sun.jna.Structure;
 
@@ -44,8 +45,98 @@ public class ComparisonSimilarity {
 		"FSDKE_INVALID_TEMPLATE",
 		"FSDKE_UNSUPPORTED_TEMPLATE_VERSION"
 	};
-	public static final String IMG_DIR = "/home/saya/Project/FLImages/";
+	public static final String IMG_DIR = "/home/saya/Project/FLImages/profile";
 	public static final String KEY = LuxandKey.Key;
+	
+	public static ArrayList<ImageSimilarity> getSimilarImage(String sample){
+		ArrayList<ImageSimilarity> similar_images = new ArrayList<ImageSimilarity>();
+		
+		HImage imgOrg = new HImage();
+		HImage imgCmp = new HImage();
+		TFacePosition.ByReference fpOrg = new TFacePosition.ByReference();
+		TFacePosition.ByReference fpCmp = new TFacePosition.ByReference();
+		//TFacePosition fpOrg = null, fpCmp = null;
+		FSDK_FaceTemplate.ByReference ftOrg = new FSDK_FaceTemplate.ByReference();
+		FSDK_FaceTemplate.ByReference ftCmp = new FSDK_FaceTemplate.ByReference();
+
+		int result;
+		float[] similarity = new float[1];
+		String pair = null;
+		int nFile;
+		String[] pics = null;
+		String temp = null;
+		
+		try{
+			BufferedWriter writer = new BufferedWriter(new FileWriter("BadPicsPair.txt"));
+			
+			pics = getFileNames();
+			
+			initFaceSDK();
+			
+			FSDK.SetFaceDetectionParameters(false, false, 500);
+			
+			for(int i = 0 ; i < pics.length ; ++i){
+				if(pics[i].compareTo(IMG_DIR + sample) == 0){
+					temp = pics[0];
+					pics[0] = pics[i];
+					pics[i] = temp;
+				}
+			}
+			
+			result = FSDK.LoadImageFromFile(imgOrg, pics[0]);
+			if(result != FSDK.FSDKE_OK)
+			{
+				return null;
+			}
+			result = FSDK.DetectFace(imgOrg, fpOrg);
+			if(result != FSDK.FSDKE_OK)
+			{
+				return null;
+			}
+			result = FSDK.GetFaceTemplateInRegion(imgOrg, fpOrg, ftOrg);
+			if(result != FSDK.FSDKE_OK)
+			{
+				return null;
+			}
+			for(int i = 1 ; i < pics.length ; ++i)
+			{
+				// load 1 img
+				result = FSDK.LoadImageFromFile(imgCmp, pics[i]);
+			
+				// find face
+				result = FSDK.DetectFace(imgCmp, fpCmp);
+				if(result != FSDK.FSDKE_OK)
+				{
+					if(result != FSDK.FSDKE_OK) writer.write(pics[i]+"\n");
+
+					FSDK.FreeImage(imgCmp);
+					break;
+				}
+			
+				FSDK.GetFaceTemplateInRegion(imgCmp, fpCmp, ftCmp);
+				
+				if(result != FSDK.FSDKE_OK)
+				{
+					System.out.println("============= break this comparison =============");
+					System.out.println(pics[i]+"\n");
+					FSDK.FreeImage(imgCmp);
+					break;
+				}
+
+				FSDK.MatchFaces(ftOrg, ftCmp, similarity);
+			
+				// save image when similarity is more than 70%
+				if(similarity[0] * 100 > 70.0f) similar_images.add(new ImageSimilarity(pics[i],similarity[0]  * 100));
+				
+				FSDK.FreeImage(imgCmp);
+			}
+			writer.close();
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		
+		return similar_images;
+	}
 	
 	public static void compareWithOneSample(String sample){
 		HImage imgOrg = new HImage();
@@ -103,13 +194,13 @@ public class ComparisonSimilarity {
 				//System.out.println("=================== This pair ====================");
 				//System.out.println(pics[i]+"\n");
 
-				// load 1 imgs
+				// load 1 img
 				result = FSDK.LoadImageFromFile(imgCmp, pics[i]);
 			
 				//System.out.println("=================== Load Image ===================");
 				//System.out.println(ERRORCODE[-result] + "\n");
 			
-				// find faces
+				// find face
 				result = FSDK.DetectFace(imgCmp, fpCmp);
 				if(result != FSDK.FSDKE_OK)
 				{

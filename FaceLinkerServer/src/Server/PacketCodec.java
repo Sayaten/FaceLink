@@ -282,7 +282,7 @@ public class PacketCodec {
 	public static String encode_IdealTypeSearchAck(IdealTypeSearchAck pk_data){
 		String data = Packet.PK_IDEAL_SCH_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getIdeal_types().size()) + Packet.FIELD_DELIM;
-		for(IdealType ideal_type : pk_data.getIdeal_types()){
+		for(ImageNameSet ideal_type : pk_data.getIdeal_types()){
 			data = ideal_type.getScreen_name() + Packet.FIELD_DELIM
 					+ ideal_type.getImage() + Packet.FIELD_DELIM;
 		}
@@ -296,8 +296,9 @@ public class PacketCodec {
 		IdealTypeSearchAck dst = new IdealTypeSearchAck();
 		
 		int size = Integer.parseInt(s.next());
+		
 		for(int i = 0 ; i < size ; ++i){
-			dst.getIdeal_types().add(new IdealType(s.next(), s.next()));
+			dst.getIdeal_types().add(new ImageNameSet(s.next(), s.next()));
 		}
 
 		return dst;

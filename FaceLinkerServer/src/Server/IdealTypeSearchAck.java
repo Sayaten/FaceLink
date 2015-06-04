@@ -3,15 +3,15 @@ package Server;
 import java.util.ArrayList;
 
 public class IdealTypeSearchAck {
-	private ArrayList<IdealType> ideal_types;
+	private ArrayList<ImageNameSet> ideal_types;
 	
 	IdealTypeSearchAck() {
-		ideal_types = new ArrayList<IdealType> (5);
+		ideal_types = new ArrayList<ImageNameSet> (5);
 	}
-	public ArrayList<IdealType> getIdeal_types() {
+	public ArrayList<ImageNameSet> getIdeal_types() {
 		return ideal_types;
 	}
-	public void setIdeal_types(ArrayList<IdealType> ideal_types) {
+	public void setIdeal_types(ArrayList<ImageNameSet> ideal_types) {
 		this.ideal_types = ideal_types;
 	}
 	
