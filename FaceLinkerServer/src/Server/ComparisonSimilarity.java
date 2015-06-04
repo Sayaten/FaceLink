@@ -96,7 +96,7 @@ public class ComparisonSimilarity {
 			result = FSDK.GetFaceTemplateInRegion(imgOrg, fpOrg, ftOrg);
 			if(result != FSDK.FSDKE_OK)
 			{
-				return null;
+				return null; 
 			}
 			for(int i = 1 ; i < pics.length ; ++i)
 			{
@@ -143,7 +143,6 @@ public class ComparisonSimilarity {
 		HImage imgCmp = new HImage();
 		TFacePosition.ByReference fpOrg = new TFacePosition.ByReference();
 		TFacePosition.ByReference fpCmp = new TFacePosition.ByReference();
-		//TFacePosition fpOrg = null, fpCmp = null;
 		FSDK_FaceTemplate.ByReference ftOrg = new FSDK_FaceTemplate.ByReference();
 		FSDK_FaceTemplate.ByReference ftCmp = new FSDK_FaceTemplate.ByReference();
 		int result;
