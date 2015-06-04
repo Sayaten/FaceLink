@@ -56,12 +56,16 @@ public class ThreadServer implements Runnable {
 		String ideal_image = "";
 		String screen_name = "";
 		String password = "";
+		String send_user = "";
+		String rec_user = "";
 		Database db = new Database();
 		ResultSet rs;
 		byte[] byte_image = null;
 		String query = "";
 		String output = "";
 		int user_id = 0;
+		int send_id = 0;
+		int rec_id = 0;
 		
 		if(!db.connect()){
 			System.out.println("DB Error!!");
@@ -135,15 +139,14 @@ public class ThreadServer implements Runnable {
 					byte_image = bs64.decode(pw_req.getProfile_img());
 					profile_image = Integer.toString(user_id)+"_profile.jpg";
 					ImageCodec.saveImage(byte_image, "profile",profile_image);
-					query = "insert into user_data(user_id, name, gender, country, job, profile_img) "
-							+ "values(?,?,?,?,?,?)";
+					query = "insert into user_data(user_id, name, gender, country, job) "
+							+ "values(?,?,?,?,?)";
 					db.setPreparedStatement(query);
 					db.getPreparedStatement().setInt(1, user_id);
 					db.getPreparedStatement().setString(2, pw_req.getName());
 					db.getPreparedStatement().setString(3, pw_req.getGender());
 					db.getPreparedStatement().setString(4, pw_req.getCountry());
 					db.getPreparedStatement().setString(5, pw_req.getJob());
-					db.getPreparedStatement().setString(6, profile_image);
 					db.getPreparedStatement().executeUpdate();
 				}catch(SQLException e){
 					db.printError(e, query);
@@ -183,14 +186,12 @@ public class ThreadServer implements Runnable {
 							+ ( (pm_req.getName() != null)   ? ",name" : "")
 							+ ( (pm_req.getGender() != null) ? ",gender" : "")
 							+ ( (pm_req.getJob() != null)    ? ",job" : "")
-							+ ( (pm_req.getCountry() != null)? ",country" : "")
-							+ ( (pm_req.getProfile_img() != null)? ",country" : "");
+							+ ( (pm_req.getCountry() != null)? ",country" : "");
 					column_data = Integer.toString(user_id)
 							+ ( (pm_req.getName() != null)   ? "," + pm_req.getName() : "")
 							+ ( (pm_req.getGender() != null) ? "," + pm_req.getGender() : "")
 							+ ( (pm_req.getJob() != null)    ? "," + pm_req.getJob() : "")
-							+ ( (pm_req.getCountry() != null)? "," + pm_req.getCountry() : "")
-							+ ( (pm_req.getProfile_img() != null)? "," + profile_image : "");
+							+ ( (pm_req.getCountry() != null)? "," + pm_req.getCountry() : "");
 					
 					query = "insert into user_data(" + columns + ")" + "values(" + column_data + ")";
 					
@@ -345,9 +346,172 @@ public class ThreadServer implements Runnable {
 				}finally{
 					out.close();
 				}
+			case Packet.PK_CONTACT_REQ:
+				ContactReq c_req = PacketCodec.decode_ContactReq(src.getData());
+				send_id = 0;
+				rec_id = 0;
 				
+				query = "select user_id from login_data where screen_name = '" + c_req.getSend_user() + "'";
+				
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					send_id = rs.getInt("user_id");
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+
+				query = "select user_id from login_data where screen_name = '" + c_req.getRec_user() + "'";
+				
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					rec_id = rs.getInt("user_id");
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				query = "insert into contact(send_id, receive_id, isAccept) values(?,?,?)";
+				
+				try{
+					db.setPreparedStatement(query);
+					db.getPreparedStatement().setInt(1, send_id);
+					db.getPreparedStatement().setInt(2, rec_id);
+					db.getPreparedStatement().setInt(3, ReplyContactReq.STANDBY);
+					db.getPreparedStatement().executeUpdate();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				ContactAck c_ack = new ContactAck(Packet.SUCCESS);
+				output = PacketCodec.encode_ContactAck(c_ack);
+				try{ 
+					out.println(output);
+				}catch(Exception e){
+					e.printStackTrace();
+				}finally{
+					out.close();
+				}
+				break;
+			case Packet.PK_REPLY_CON_REQ:
+				ReplyContactReq rc_req = PacketCodec.decode_ReplyContactReq(src.getData());
+				
+				send_id = 0;
+				rec_id = 0;
+				
+				query = "select user_id from login_data where screen_name = '" + rc_req.getSend_user() + "'";
+				
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					send_id = rs.getInt("user_id");
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+
+				query = "select user_id from login_data where screen_name = '" + rc_req.getRec_user() + "'";
+				
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					rec_id = rs.getInt("user_id");
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				if(rc_req.getReply() == ReplyContactReq.REJECT){
+					query = "delete from contact where send_id = " + Integer.toString(send_id)
+							+" and receive_id = " + Integer.toString(rec_id);
+					try{
+						db.getStatement().executeUpdate(query);
+					}catch(SQLException e){
+						db.printError(e, query);
+					}
+				}else if(rc_req.getReply() == ReplyContactReq.ACCEPT){
+					query = "update contact set isAccept = "+Integer.toString(rc_req.getReply())
+							+" where send_id = " + Integer.toString(send_id)
+							+" and receive_id = " + Integer.toString(rec_id);
+					try{
+						db.getStatement().executeUpdate(query);
+					}catch(SQLException e){
+						db.printError(e, query);
+					}
+				}
+				
+				ReplyContactAck rc_ack = new ReplyContactAck(Packet.SUCCESS);
+				output = PacketCodec.encode_ReplyContactAck(rc_ack);
+				try{ 
+					out.println(output);
+				}catch(Exception e){
+					e.printStackTrace();
+				}finally{
+					out.close();
+				}
+				break;
+			case Packet.PK_GET_CON_REQ:
+				GetContactReq gc_req = PacketCodec.decode_GetContactReq(src.getData());
+				
+				query = "select user_id from login_data where screen_name = '" + gc_req.getScreen_name() + "'";
+				
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					user_id = rs.getInt("user_id");
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				GetContactAck gc_ack = new GetContactAck();
+				
+				ArrayList<int[]> con_arr = new ArrayList<int[]> ();
+				int[] temp = null;
+				
+				query = "select send_id, isAccept from contact where user_id = " + Integer.toString(user_id);
+				
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					temp = new int[2]; // 0 == send_id  1 == isAccept 
+					temp[0] = rs.getInt("send_id");
+					temp[1] = rs.getInt("isAccept");
+					con_arr.add(temp);
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				for(int i = 0 ; i < con_arr.size() ; ++i){
+					query = "select screen_name from login_data where user_id = '" + con_arr.get(i)[0] + "'";
+					try{
+						rs = db.getStatement().executeQuery(query);
+						rs.next();
+						send_user = rs.getString("screen_name");
+						rs.close();
+					}catch(SQLException e){
+						db.printError(e, query);
+					}
+					byte_image = ImageCodec.loadImageToByteArray("profile", send_user);
+					profile_image = bs64.encode(byte_image);
+					
+					gc_ack.getContacts().add(new ContactInfo( new ImageNameSet(send_user, profile_image), con_arr.get(i)[1] ));
+				}
+				
+				output = PacketCodec.encode_GetContactAck(gc_ack);
+				try{ 
+					out.println(output);
+				}catch(Exception e){
+					e.printStackTrace();
+				}finally{
+					out.close();
+				}
 				break;
 			default:
+				System.out.println("Not Defined Packet Type!!!!");
 		}
 	}
 }
