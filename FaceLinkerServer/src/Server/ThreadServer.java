@@ -287,7 +287,7 @@ public class ThreadServer implements Runnable {
 				try{
 					rs = db.getStatement().executeQuery(query);
 					rs.next();
-					count = rs.getInt(0);
+					count = rs.getInt(1);
 					rs.close();
 				}catch(SQLException e){
 					db.printError(e, query);
