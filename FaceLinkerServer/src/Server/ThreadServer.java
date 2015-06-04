@@ -295,6 +295,22 @@ public class ThreadServer implements Runnable {
 				
 				user_id = pg_req.getUser_id() % count + 1;
 				
+				query = "select user_id from login_data";
+				
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					for(int i = 1; i < user_id ; ++i){
+						rs.next();
+					}
+					count = rs.getInt("user_id");
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				
+				
 				byte_image = ImageCodec.loadImageToByteArray("part", Integer.toString(user_id) + "_" + pg_req.getPart_type()+".jpg");
 				part_image = bs64.encode(byte_image);
 				
