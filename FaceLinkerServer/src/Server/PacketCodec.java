@@ -238,7 +238,7 @@ public class PacketCodec {
 	// About part get request
 	// Encode part get request packet
 	public static String encode_PartGetReq(PartGetReq pk_data) {
-		String data = Packet.PK_PART_REG_REQ + Packet.FIELD_DELIM
+		String data = Packet.PK_PART_GET_REQ + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getUser_id()) + Packet.FIELD_DELIM
 				+ pk_data.getPart_type() + Packet.FIELD_DELIM 
 				+ Packet.PK_DELIM;
