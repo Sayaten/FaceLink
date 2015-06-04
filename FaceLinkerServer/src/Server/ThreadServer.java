@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ThreadServer implements Runnable {
@@ -50,10 +51,17 @@ public class ThreadServer implements Runnable {
 	}
 	
 	public void handler(Packet src, PrintWriter out) throws IOException{
+		String part_image = "";
+		String profile_image = "";
+		String ideal_image = "";
+		String screen_name = "";
+		String password = "";
 		Database db = new Database();
-		byte[] BS_res = null;
+		ResultSet rs;
+		byte[] byte_image = null;
 		String query = "";
 		String output = "";
+		int user_id = 0;
 		
 		if(!db.connect()){
 			System.out.println("DB Error!!");
@@ -65,16 +73,45 @@ public class ThreadServer implements Runnable {
 
 		switch(src.getType()){
 			case Packet.PK_JOIN_REQ:
-				JoinReq JR_data = PacketCodec.decode_JoinReq(src.getData());
+				JoinReq j_req = PacketCodec.decode_JoinReq(src.getData());
 				query = "insert into login_data(screen_name, password) "
-						+ "values('"+JR_data.getScreen_name()+"','"+JR_data.getPassword()+"');";
+						+ "values('"+j_req.getScreen_name()+"','"+j_req.getPassword()+"');";
 				try{
 					db.getStatement().executeUpdate(query);
 				}catch(SQLException e){
 					db.printError(e, query);
 				}
-				JoinAck joinack = new JoinAck(Packet.JR_SUCCESS);
-				output = PacketCodec.encode_JoinAck(joinack);
+				JoinAck j_ack = new JoinAck(Packet.SUCCESS);
+				output = PacketCodec.encode_JoinAck(j_ack);
+				try{ 
+					out.println(output);
+				}catch(Exception e){
+					e.printStackTrace();
+				}finally{
+					out.close();
+				}
+				break;
+			case Packet.PK_LOGIN_REQ:
+				LoginReq l_req = PacketCodec.decode_LoginReq(src.getData());
+				query = "select password from login_data where screen_name = '" + l_req.getScreen_name() + "'";
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					password = rs.getString("password");
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				LoginAck l_ack = new LoginAck();
+				if( password == null || password.compareTo(l_req.getPassword()) != 0){
+					l_ack.setResult(Packet.FAIL);
+				}
+				else{
+					l_ack.setResult(Packet.SUCCESS);
+				}
+				
+				output = PacketCodec.encode_LoginAck(l_ack);
 				try{ 
 					out.println(output);
 				}catch(Exception e){
@@ -84,44 +121,233 @@ public class ThreadServer implements Runnable {
 				}
 				break;
 			case Packet.PK_PRO_WRITE_REQ:
-				ProfileWriteReq PWR_data = PacketCodec.decode_ProfileWriteReq(src.getData());
-				int user_id = 0;
+				ProfileModifyReq pw_req = PacketCodec.decode_ProfileWriteReq(src.getData());
+				user_id = 0;
 				
 				query = "select user_id from login_data "
-						+ "where screen_name = '"+ PWR_data.getScreen_name()+"';";
+						+ "where screen_name = '"+ pw_req.getScreen_name()+"';";
 				try{
-					ResultSet rs = db.getStatement().executeQuery(query);
+					rs = db.getStatement().executeQuery(query);
 					rs.next();
 					user_id = rs.getInt("user_id");
 					rs.close();
 				
-					BS_res = bs64.decode(PWR_data.getProfile_img());
-					String profileImg = Integer.toString(user_id)+"_profile.jpg";
-					ImageCodec.saveImage(BS_res, profileImg);
+					byte_image = bs64.decode(pw_req.getProfile_img());
+					profile_image = Integer.toString(user_id)+"_profile.jpg";
+					ImageCodec.saveImage(byte_image, "profile",profile_image);
 					query = "insert into user_data(user_id, name, gender, country, job, profile_img) "
 							+ "values(?,?,?,?,?,?)";
 					db.setPreparedStatement(query);
 					db.getPreparedStatement().setInt(1, user_id);
-					db.getPreparedStatement().setString(2, PWR_data.getName());
-					db.getPreparedStatement().setString(3, PWR_data.getGender());
-					db.getPreparedStatement().setString(4, PWR_data.getCountry());
-					db.getPreparedStatement().setString(5, PWR_data.getJob());
-					db.getPreparedStatement().setString(6, ImageCodec.IMG_DIR+profileImg);
+					db.getPreparedStatement().setString(2, pw_req.getName());
+					db.getPreparedStatement().setString(3, pw_req.getGender());
+					db.getPreparedStatement().setString(4, pw_req.getCountry());
+					db.getPreparedStatement().setString(5, pw_req.getJob());
+					db.getPreparedStatement().setString(6, profile_image);
 					db.getPreparedStatement().executeUpdate();
 				}catch(SQLException e){
 					db.printError(e, query);
 				}
-				ProfileWriteAck pwrack = new ProfileWriteAck(Packet.PWR_SUCCESS);
-				output = PacketCodec.encode_ProfileWriteAck(pwrack);try{ 
-				out.println(output);
+				ProfileModifyAck pwr_ack = new ProfileModifyAck(Packet.SUCCESS);
+				output = PacketCodec.encode_ProfileWriteAck(pwr_ack);
+				try{ 
+					out.println(output);
 				}catch(Exception e){
 					e.printStackTrace();
 				}finally{
 					out.close();
 				}
 				break;
-			default:
+			case Packet.PK_PRO_MODIFY_REQ:
+				ProfileModifyReq pm_req = PacketCodec.decode_ProfileModifyReq(src.getData());
+				String columns = "";
+				String column_data = "";
 				
+				user_id = 0;
+				
+				query = "select user_id from login_data "
+						+ "where screen_name = '"+ pm_req.getScreen_name()+"';";
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					user_id = rs.getInt("user_id");
+					rs.close();
+				
+					if(pm_req.getProfile_img() != null){
+						byte_image = bs64.decode(pm_req.getProfile_img());
+						profile_image = Integer.toString(user_id)+"_profile.jpg";
+						ImageCodec.saveImage(byte_image, "profile",profile_image);
+					}
+					
+					columns = "user_id"
+							+ ( (pm_req.getName() != null)   ? ",name" : "")
+							+ ( (pm_req.getGender() != null) ? ",gender" : "")
+							+ ( (pm_req.getJob() != null)    ? ",job" : "")
+							+ ( (pm_req.getCountry() != null)? ",country" : "")
+							+ ( (pm_req.getProfile_img() != null)? ",country" : "");
+					column_data = Integer.toString(user_id)
+							+ ( (pm_req.getName() != null)   ? "," + pm_req.getName() : "")
+							+ ( (pm_req.getGender() != null) ? "," + pm_req.getGender() : "")
+							+ ( (pm_req.getJob() != null)    ? "," + pm_req.getJob() : "")
+							+ ( (pm_req.getCountry() != null)? "," + pm_req.getCountry() : "")
+							+ ( (pm_req.getProfile_img() != null)? "," + profile_image : "");
+					
+					query = "insert into user_data(" + columns + ")" + "values(" + column_data + ")";
+					
+					db.getStatement().executeUpdate(query);
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				ProfileModifyAck pm_ack = new ProfileModifyAck(Packet.SUCCESS);
+				output = PacketCodec.encode_ProfileModifyAck(pm_ack);
+				try{ 
+					out.println(output);
+				}catch(Exception e){
+					e.printStackTrace();
+				}finally{
+					out.close();
+				}
+				break;
+			case Packet.PK_PART_REG_REQ:
+				PartRegisterReq pr_req = PacketCodec.decode_PartRegisterReq(src.getData());
+				user_id = 0;
+				
+				query = "select user_id from login_data "
+						+ "where screen_name = '"+ pr_req.getScreen_name()+"';";
+				
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					user_id = rs.getInt("user_id");
+					rs.close();
+				
+					byte_image = bs64.decode(pr_req.getEyes());
+					part_image = Integer.toString(user_id)+"_eyes.jpg";
+					ImageCodec.saveImage(byte_image, "part", part_image);
+					
+					byte_image = bs64.decode(pr_req.getNose());
+					part_image = Integer.toString(user_id)+"_nose.jpg";
+					ImageCodec.saveImage(byte_image, "part", part_image);
+					
+					byte_image = bs64.decode(pr_req.getMouth());
+					part_image = Integer.toString(user_id)+"_mouth.jpg";
+					ImageCodec.saveImage(byte_image, "part", part_image);
+					
+					byte_image = bs64.decode(pr_req.getFace());
+					part_image = Integer.toString(user_id)+"_face.jpg";
+					ImageCodec.saveImage(byte_image, "part", part_image);
+					
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				PartRegisterAck pr_ack = new PartRegisterAck(Packet.SUCCESS);
+				output = PacketCodec.encode_PartRegisterAck(pr_ack);
+				try{ 
+					out.println(output);
+				}catch(Exception e){
+					e.printStackTrace();
+				}finally{
+					out.close();
+				}
+				break;
+			case Packet.PK_PART_GET_REQ:
+				PartGetReq pg_req = PacketCodec.decode_PartGetReq(src.getData());
+				user_id = pg_req.getUser_id();
+				
+				byte_image = ImageCodec.loadImageToByteArray("part", Integer.toString(user_id)+pg_req.getPart_type());
+				part_image = bs64.encode(byte_image);
+				
+				PartGetAck pg_ack = new PartGetAck();
+				pg_ack.setPart(part_image);
+				
+				output = PacketCodec.encode_PartGetAck(pg_ack);
+				try{ 
+					out.println(output);
+				}catch(Exception e){
+					e.printStackTrace();
+				}finally{
+					out.close();
+				}
+				
+				break;
+			case Packet.PK_IDEAL_REG_REQ:
+				IdealTypeRegisterReq itr_req = PacketCodec.decode_IdealTypeRegisterReq(src.getData());
+				user_id = 0;
+				
+				query = "select user_id from login_data "
+						+ "where screen_name = '"+ itr_req.getScreen_name()+"';";
+				
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					user_id = rs.getInt("user_id");
+					rs.close();
+				
+					byte_image = bs64.decode(itr_req.getIdeal_type());
+					ideal_image = Integer.toString(user_id)+"_ideal_type.jpg";
+					ImageCodec.saveImage(byte_image, "ideal_type", ideal_image);
+					
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				IdealTypeRegisterAck itr_ack = new IdealTypeRegisterAck(Packet.SUCCESS);
+				output = PacketCodec.encode_IdealTypeRegisterAck(itr_ack);
+				try{ 
+					out.println(output);
+				}catch(Exception e){
+					e.printStackTrace();
+				}finally{
+					out.close();
+				}
+				break;
+			case Packet.PK_IDEAL_SCH_REQ:
+				IdealTypeSearchReq its_req = PacketCodec.decode_IdealTypeSearchReq(src.getData());
+				ArrayList<ImageSimilarity> image_arr = ComparisonSimilarity.getSimilarImage(its_req.getScreen_name());
+				ArrayList<ImageNameSet> ideal_arr = new ArrayList<ImageNameSet> ();
+				int begin = 0;
+				int end = 0;
+				
+				QuickSort.quickSort(image_arr, 0, image_arr.size() - 1);
+				
+				for(int i = 0 ; i < 5 && i < image_arr.size(); ++i){
+					end = image_arr.get(i).getName().indexOf('_') - 1;
+				
+					user_id = Integer.parseInt(image_arr.get(i).getName().substring(begin, end));
+				
+					query = "select screen_name from login_data "
+							+ "where user_id = '"+ Integer.toString(user_id) + "';";
+					
+					try{
+						rs = db.getStatement().executeQuery(query);
+						rs.next();
+						screen_name = rs.getString("screen_name");
+						rs.close();
+					}catch(SQLException e){
+						db.printError(e, query);
+					}
+					byte_image = ImageCodec.loadImageToByteArray("profile", image_arr.get(i).getName());
+					profile_image = bs64.encode(byte_image);
+
+					ideal_arr.add(new ImageNameSet(screen_name, profile_image));
+				}
+				
+				IdealTypeSearchAck its_ack = new IdealTypeSearchAck();
+				its_ack.setIdeal_types(ideal_arr);
+				
+				output = PacketCodec.encode_IdealTypeSearchAck(its_ack);
+				try{ 
+					out.println(output);
+				}catch(Exception e){
+					e.printStackTrace();
+				}finally{
+					out.close();
+				}
+				
+				break;
+			default:
 		}
 	}
 }
