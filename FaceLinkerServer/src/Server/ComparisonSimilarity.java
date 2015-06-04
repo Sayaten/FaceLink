@@ -46,7 +46,7 @@ public class ComparisonSimilarity {
 		"FSDKE_UNSUPPORTED_TEMPLATE_VERSION"
 	};
 	public static final String IMG_DIR = "/home/saya/Project/FLImages/profile";
-	public static final String KEY = LuxandKey.Key;
+	public static final String KEY = LuxandKey.KEY;
 	
 	public static ArrayList<ImageSimilarity> getSimilarImage(String sample){
 		ArrayList<ImageSimilarity> similar_images = new ArrayList<ImageSimilarity>();

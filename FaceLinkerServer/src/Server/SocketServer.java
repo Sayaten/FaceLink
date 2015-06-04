@@ -11,13 +11,13 @@ public class SocketServer {
 	private static Thread thread = null;
 	private static ServerSocket serverSocket = null;
 	private static Socket clientSocket = null;
-	private static final int port = 9193; // can use 9193 9194 9195
+	private static final int PORT = 9193; // can use 9193 9194 9195
 	private static ThreadServer threadServer = null;
 	
 	public static void main(String[] args) throws IOException{
 		while(true)
 		{
-			serverSocket = new ServerSocket(port);
+			serverSocket = new ServerSocket(PORT);
 			serverSocket.setReuseAddress(true);
 			
 			while(true) {
