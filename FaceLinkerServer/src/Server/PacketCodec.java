@@ -324,8 +324,8 @@ public class PacketCodec {
 		String data = Packet.PK_IDEAL_SCH_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getIdeal_types().size()) + Packet.FIELD_DELIM;
 		for(ImageNameSet ideal_type : pk_data.getIdeal_types()){
-			data = ideal_type.getScreen_name() + Packet.FIELD_DELIM
-					+ ideal_type.getImage() + Packet.FIELD_DELIM;
+			data += (ideal_type.getScreen_name() + Packet.FIELD_DELIM
+					+ ideal_type.getImage() + Packet.FIELD_DELIM);
 		}
 		data += Packet.PK_DELIM;
 		return data;
@@ -403,4 +403,132 @@ public class PacketCodec {
 	/*
 	 * Codec Contact
 	 */
+	
+	// About Contact req
+	// Encode contact request packet
+	public static String endcode_ContactReq(ContactReq pk_data){
+		String data = Packet.PK_CONTACT_REQ + Packet.FIELD_DELIM
+				+ pk_data.getSend_user() + Packet.FIELD_DELIM
+				+ pk_data.getRec_user() + Packet.FIELD_DELIM
+				+ Packet.PK_DELIM;
+		return data;
+	}
+	// Decode contact request packet
+	public static ContactReq decode_ContactReq(String pk_data){
+		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
+		ContactReq dst =  new ContactReq();
+		
+		dst.setSend_user(s.next());
+		dst.setRec_user(s.next());
+		
+		return dst;
+	}
+	
+	// About Contact ack
+	// Encode contact ack packet
+	public static String encode_ContactAck(ContactAck pk_data){
+		String data = Packet.PK_CONTACT_ACK + Packet.FIELD_DELIM
+				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
+				+ Packet.PK_DELIM;
+		return data;
+	}
+	// Decode contact ack packet
+	public static ContactAck decode_ContactAck(String pk_data){
+		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
+		ContactAck dst = new ContactAck();
+		
+		dst.setResult(s.nextInt());
+
+		return dst;
+	}
+	
+	/*
+	 * Codec Reply Contact
+	 */
+	
+	// About Reply Contact req
+	// Encode reply contact request packet
+	public static String endcode_ReplyContactReq(ReplyContactReq pk_data){
+		String data = Packet.PK_CON_REPLY_REQ + Packet.FIELD_DELIM
+				+ pk_data.getSend_user() + Packet.FIELD_DELIM
+				+ pk_data.getRec_user() + Packet.FIELD_DELIM
+				+ Integer.toString(pk_data.getReply()) + Packet.FIELD_DELIM
+				+ Packet.PK_DELIM;
+		return data;
+	}
+	// Decode reply contact request packet
+	public static ReplyContactReq decode_ReplyContactReq(String pk_data){
+		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
+		ReplyContactReq dst =  new ReplyContactReq();
+		
+		dst.setSend_user(s.next());
+		dst.setRec_user(s.next());
+		dst.setReply(s.nextInt());
+		return dst;
+	}
+	
+	// About Reply Contact ack
+	// Encode reply contact ack packet
+	public static String encode_ReplyContactAck(ReplyContactAck pk_data){
+		String data = Packet.PK_CON_REPLY_ACK + Packet.FIELD_DELIM
+				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
+				+ Packet.PK_DELIM;
+		return data;
+	}
+	// Decode reply contact ack packet
+	public static ReplyContactAck decode_ReplyContactAck(String pk_data){
+		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
+		ReplyContactAck dst = new ReplyContactAck();
+		
+		dst.setResult(s.nextInt());
+
+		return dst;
+	}
+	
+	/*
+	 * Codec Get Contact
+	 */
+	
+	// About Get Contact req
+	// Encode get contact request packet
+	public static String endcode_GetContactReq(GetContactReq pk_data){
+		String data = Packet.PK_GET_CON_REQ + Packet.FIELD_DELIM
+				+ pk_data.getScreen_name() + Packet.FIELD_DELIM
+				+ Packet.PK_DELIM;
+		return data;
+	}
+	// Decode get contact request packet
+	public static GetContactReq decode_GetContactReq(String pk_data){
+		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
+		GetContactReq dst =  new GetContactReq();
+		
+		dst.setScreen_name(s.next());
+		return dst;
+	}
+	
+	// About Get Contact ack
+	// Encode get contact ack packet
+	public static String encode_GetContactAck(GetContactAck pk_data){
+		int size = pk_data.getContacts().size();
+		String data = Packet.PK_GET_CON_ACK + Packet.FIELD_DELIM
+					+ Integer.toString(size) + Packet.FIELD_DELIM;
+		for(ImageNameSet contact : pk_data.getContacts()){
+			data += ( contact.getScreen_name() + Packet.FIELD_DELIM
+					+ contact.getImage() + Packet.FIELD_DELIM );
+		}
+		data += Packet.PK_DELIM;
+		return data;
+	}
+	// Decode get contact ack packet
+	public static GetContactAck decode_GetContactAck(String pk_data){
+		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
+		GetContactAck dst = new GetContactAck();
+		int size = s.nextInt();
+		
+		for(int i = 0 ; i < size ; ++i){
+			dst.getContacts().add(new ImageNameSet(s.next(), s.next()));
+		}
+		
+		return dst;
+	}
 }

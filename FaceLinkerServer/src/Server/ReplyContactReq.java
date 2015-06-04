@@ -3,6 +3,7 @@ package Server;
 public class ReplyContactReq {
 	public static final int REJECT = 0x00;
 	public static final int ACCEPT = 0x01;
+	public static final int STANDBY = 0x02;
 	
 	private String send_user;
 	private String rec_user;
