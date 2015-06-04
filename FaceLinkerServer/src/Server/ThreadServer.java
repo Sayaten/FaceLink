@@ -231,13 +231,13 @@ public class ThreadServer implements Runnable {
 					//query = "insert into user_data(" + columns + ") " + "values(" + column_data + ")";
 					query = "update user_data set "
 							+ ( (pm_req.getName() != null)   ? "name = " : "")
-							+ ( (pm_req.getName() != null)   ? "'" + pm_req.getName() : "'")
+							+ ( (pm_req.getName() != null)   ? "'" + pm_req.getName() + "'" : "")
 							+ ( (pm_req.getGender() != null) ? ",gender = " : "")
-							+ ( (pm_req.getGender() != null) ? ",'" + pm_req.getGender() : "'")
+							+ ( (pm_req.getGender() != null) ? ",'" + pm_req.getGender() + "'" : "")
 							+ ( (pm_req.getJob() != null)    ? ",job = " : "")
-							+ ( (pm_req.getJob() != null)    ? ",'" + pm_req.getJob() : "'")
+							+ ( (pm_req.getJob() != null)    ? ",'" + pm_req.getJob() + "'" : "")
 							+ ( (pm_req.getCountry() != null)? ",country = " : "")
-							+ ( (pm_req.getCountry() != null)? ",'" + pm_req.getCountry() : "'")
+							+ ( (pm_req.getCountry() != null)? ",'" + pm_req.getCountry() + "'" : "")
 							+ " where user_id = " + Integer.toString(user_id);
 					db.getStatement().executeUpdate(query);
 				}catch(SQLException e){
