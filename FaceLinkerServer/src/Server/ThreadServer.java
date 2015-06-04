@@ -310,7 +310,7 @@ public class ThreadServer implements Runnable {
 				PartGetAck pg_ack = new PartGetAck();
 				pg_ack.setPart(part_image);
 				
-				output = PacketCodec.encode_PartGetAck(pg_ack);
+				//output = PacketCodec.encode_PartGetAck(pg_ack);
 				try{ 
 					out.println(output);
 				}catch(Exception e){
