@@ -17,8 +17,8 @@ public class SocketServer {
 	public static void main(String[] args) throws IOException{
 		while(true)
 		{
-			serverSocket.setReuseAddress(true);
 			serverSocket = new ServerSocket(port);
+			serverSocket.setReuseAddress(true);
 			
 			while(true) {
 				clientSocket = serverSocket.accept();
