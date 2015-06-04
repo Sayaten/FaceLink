@@ -170,7 +170,7 @@ public class ThreadServer implements Runnable {
 					profile_image = Integer.toString(user_id)+"_profile.jpg";
 					ImageCodec.saveImage(byte_image, "profile",profile_image);
 					query = "insert into user_data(user_id, name, gender, country, job) "
-							+ "values(?,?,?,?,?)";
+							+ " values(?,?,?,?,?)";
 					db.setPreparedStatement(query);
 					db.getPreparedStatement().setInt(1, user_id);
 					db.getPreparedStatement().setString(2, pw_req.getName());
@@ -223,7 +223,7 @@ public class ThreadServer implements Runnable {
 							+ ( (pm_req.getJob() != null)    ? "," + pm_req.getJob() : "")
 							+ ( (pm_req.getCountry() != null)? "," + pm_req.getCountry() : "");
 					
-					query = "insert into user_data(" + columns + ")" + "values(" + column_data + ")";
+					query = "insert into user_data(" + columns + ") " + "values(" + column_data + ")";
 					
 					db.getStatement().executeUpdate(query);
 				}catch(SQLException e){
