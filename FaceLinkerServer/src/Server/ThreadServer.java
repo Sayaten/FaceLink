@@ -113,6 +113,36 @@ public class ThreadServer implements Runnable {
 				}
 				else{
 					l_ack.setResult(Packet.SUCCESS);
+					
+					query = "select user_id from login_data where screen_name = '" + l_req.getScreen_name() + "'";
+					try{
+						rs = db.getStatement().executeQuery(query);
+						rs.next();
+						user_id = rs.getInt("user_id");
+						rs.close();
+					}catch(SQLException e){
+						db.printError(e, query);
+					}
+					
+					query = "select * from user_data where user_id = "+Integer.toString(user_id);
+					
+					try{
+						rs = db.getStatement().executeQuery(query);
+						rs.next();
+						
+						l_ack.setName(rs.getString("name"));
+						l_ack.setGender(rs.getString("gender"));
+						l_ack.setCountry(rs.getString("country"));
+						l_ack.setJob(rs.getString("job"));
+						
+						rs.close();
+						
+						byte_image = ImageCodec.loadImageToByteArray("profile", Integer.toString(user_id)+"profile.jpg");
+						profile_image = bs64.encode(byte_image);
+						l_ack.setProfile_img(profile_image);
+					}catch(SQLException e){
+						db.printError(e, query);
+					}
 				}
 				
 				output = PacketCodec.encode_LoginAck(l_ack);
@@ -257,7 +287,7 @@ public class ThreadServer implements Runnable {
 				PartGetReq pg_req = PacketCodec.decode_PartGetReq(src.getData());
 				user_id = pg_req.getUser_id();
 				
-				byte_image = ImageCodec.loadImageToByteArray("part", Integer.toString(user_id)+pg_req.getPart_type());
+				byte_image = ImageCodec.loadImageToByteArray("part", Integer.toString(user_id)+pg_req.getPart_type()+".jpg");
 				part_image = bs64.encode(byte_image);
 				
 				PartGetAck pg_ack = new PartGetAck();

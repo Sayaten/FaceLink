@@ -110,6 +110,11 @@ public class PacketCodec {
 	public static String encode_LoginAck(LoginAck pk_data){
 		String data = Packet.PK_LOGIN_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
+				+ pk_data.getName() + Packet.FIELD_DELIM
+				+ pk_data.getJob() + Packet.FIELD_DELIM
+				+ pk_data.getGender() + Packet.FIELD_DELIM
+				+ pk_data.getCountry() + Packet.FIELD_DELIM
+				+ pk_data.getProfile_img() + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
 		
 		return data;
@@ -121,6 +126,11 @@ public class PacketCodec {
 		LoginAck dst = new LoginAck();
 		
 		dst.setResult(s.nextInt());
+		dst.setName(s.next());
+		dst.setJob(s.next());
+		dst.setGender(s.next());
+		dst.setCountry(s.next());
+		dst.setProfile_img(s.next());
 		
 		return dst;
 	}
