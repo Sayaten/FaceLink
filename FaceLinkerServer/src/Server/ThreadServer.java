@@ -281,7 +281,19 @@ public class ThreadServer implements Runnable {
 				break;
 			case Packet.PK_PART_GET_REQ:
 				PartGetReq pg_req = PacketCodec.decode_PartGetReq(src.getData());
-				user_id = pg_req.getUser_id();
+				int count = 1;
+				
+				query = "select count(*) from login_data";
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					count = rs.getInt(0);
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				user_id = pg_req.getUser_id() % count;
 				
 				byte_image = ImageCodec.loadImageToByteArray("part", Integer.toString(user_id) + "_" + pg_req.getPart_type()+".jpg");
 				part_image = bs64.encode(byte_image);
