@@ -137,7 +137,7 @@ public class ThreadServer implements Runnable {
 						
 						rs.close();
 						
-						byte_image = ImageCodec.loadImageToByteArray("profile", Integer.toString(user_id)+"profile.jpg");
+						byte_image = ImageCodec.loadImageToByteArray("profile", Integer.toString(user_id)+"_profile.jpg");
 						profile_image = bs64.encode(byte_image);
 						l_ack.setProfile_img(profile_image);
 					}catch(SQLException e){
@@ -301,7 +301,7 @@ public class ThreadServer implements Runnable {
 				PartGetReq pg_req = PacketCodec.decode_PartGetReq(src.getData());
 				user_id = pg_req.getUser_id();
 				
-				byte_image = ImageCodec.loadImageToByteArray("part", Integer.toString(user_id)+pg_req.getPart_type()+".jpg");
+				byte_image = ImageCodec.loadImageToByteArray("part", Integer.toString(user_id) + "_" + pg_req.getPart_type()+".jpg");
 				part_image = bs64.encode(byte_image);
 				
 				PartGetAck pg_ack = new PartGetAck();
@@ -545,7 +545,7 @@ public class ThreadServer implements Runnable {
 					}catch(SQLException e){
 						db.printError(e, query);
 					}
-					byte_image = ImageCodec.loadImageToByteArray("profile", send_user);
+					byte_image = ImageCodec.loadImageToByteArray("profile", Integer.toString(con_arr.get(i)[0])+"_profile.jpg");
 					profile_image = bs64.encode(byte_image);
 					
 					gc_ack.getContacts().add(new ContactInfo( new ImageNameSet(send_user, profile_image), con_arr.get(i)[1] ));
