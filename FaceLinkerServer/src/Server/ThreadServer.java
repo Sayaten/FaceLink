@@ -73,7 +73,6 @@ public class ThreadServer implements Runnable {
 		}
 		
 		System.out.println("Packet Type: "+src.getType());
-		//System.out.println("Packet Data: "+src.getData());
 
 		switch(src.getType()){
 			case Packet.PK_JOIN_REQ:
@@ -147,8 +146,6 @@ public class ThreadServer implements Runnable {
 				
 				output = PacketCodec.encode_LoginAck(l_ack);
 				
-				System.out.println(output);
-				
 				try{ 
 					out.println(output);
 				}catch(Exception e){
@@ -179,12 +176,6 @@ public class ThreadServer implements Runnable {
 							+ ",'" + pw_req.getGender() + "' "
 							+ ",'" + pw_req.getCountry() + "' "
 							+ ",'" + pw_req.getJob() + "')";
-					//db.setPreparedStatement(query);
-					//db.getPreparedStatement().setInt(1, user_id);
-					//db.getPreparedStatement().setString(2, pw_req.getName());
-					//db.getPreparedStatement().setString(3, pw_req.getGender());
-					//db.getPreparedStatement().setString(4, pw_req.getCountry());
-					//db.getPreparedStatement().setString(5, pw_req.getJob());
 					db.getStatement().executeUpdate(query);
 				}catch(SQLException e){
 					db.printError(e, query);
@@ -220,18 +211,6 @@ public class ThreadServer implements Runnable {
 						ImageCodec.saveImage(byte_image, "profile",profile_image);
 					}
 					
-					//columns = "user_id"
-					//		+ ( (pm_req.getName() != null)   ? ",name" : "")
-					//		+ ( (pm_req.getGender() != null) ? ",gender" : "")
-					//		+ ( (pm_req.getJob() != null)    ? ",job" : "")
-					//		+ ( (pm_req.getCountry() != null)? ",country" : "");
-					//column_data = Integer.toString(user_id)
-					//		+ ( (pm_req.getName() != null)   ? ",'" + pm_req.getName() : "'")
-					//		+ ( (pm_req.getGender() != null) ? ",'" + pm_req.getGender() : "'")
-					//		+ ( (pm_req.getJob() != null)    ? ",'" + pm_req.getJob() : "'")
-					//		+ ( (pm_req.getCountry() != null)? ",'" + pm_req.getCountry() : "'");
-					
-					//query = "insert into user_data(" + columns + ") " + "values(" + column_data + ")";
 					query = "update user_data set "
 							+ ( (pm_req.getName() != null)   ? "name = " : "")
 							+ ( (pm_req.getName() != null)   ? "'" + pm_req.getName() + "'" : "")
@@ -310,7 +289,7 @@ public class ThreadServer implements Runnable {
 				PartGetAck pg_ack = new PartGetAck();
 				pg_ack.setPart(part_image);
 				
-				//output = PacketCodec.encode_PartGetAck(pg_ack);
+				output = PacketCodec.encode_PartGetAck(pg_ack);
 				try{ 
 					out.println(output);
 				}catch(Exception e){
