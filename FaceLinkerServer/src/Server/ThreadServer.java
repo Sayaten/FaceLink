@@ -146,6 +146,9 @@ public class ThreadServer implements Runnable {
 				}
 				
 				output = PacketCodec.encode_LoginAck(l_ack);
+				
+				System.out.println(output);
+				
 				try{ 
 					out.println(output);
 				}catch(Exception e){
