@@ -170,14 +170,19 @@ public class ThreadServer implements Runnable {
 					profile_image = Integer.toString(user_id)+"_profile.jpg";
 					ImageCodec.saveImage(byte_image, "profile",profile_image);
 					query = "insert into user_data(user_id, name, gender, country, job) "
-							+ " values(?,?,?,?,?)";
-					db.setPreparedStatement(query);
-					db.getPreparedStatement().setInt(1, user_id);
-					db.getPreparedStatement().setString(2, pw_req.getName());
-					db.getPreparedStatement().setString(3, pw_req.getGender());
-					db.getPreparedStatement().setString(4, pw_req.getCountry());
-					db.getPreparedStatement().setString(5, pw_req.getJob());
-					db.getPreparedStatement().executeUpdate();
+							+ " values(" 
+							+ Integer.toString(user_id) + ", "
+							+ "' " + pw_req.getName() + "', "
+							+ "' " + pw_req.getGender() + "', "
+							+ "' " + pw_req.getCountry() + "', "
+							+ "' " + pw_req.getJob() + "')";
+					//db.setPreparedStatement(query);
+					//db.getPreparedStatement().setInt(1, user_id);
+					//db.getPreparedStatement().setString(2, pw_req.getName());
+					//db.getPreparedStatement().setString(3, pw_req.getGender());
+					//db.getPreparedStatement().setString(4, pw_req.getCountry());
+					//db.getPreparedStatement().setString(5, pw_req.getJob());
+					db.getStatement().executeUpdate(query);
 				}catch(SQLException e){
 					db.printError(e, query);
 				}
@@ -218,10 +223,10 @@ public class ThreadServer implements Runnable {
 							+ ( (pm_req.getJob() != null)    ? ",job" : "")
 							+ ( (pm_req.getCountry() != null)? ",country" : "");
 					column_data = Integer.toString(user_id)
-							+ ( (pm_req.getName() != null)   ? "," + pm_req.getName() : "")
-							+ ( (pm_req.getGender() != null) ? "," + pm_req.getGender() : "")
-							+ ( (pm_req.getJob() != null)    ? "," + pm_req.getJob() : "")
-							+ ( (pm_req.getCountry() != null)? "," + pm_req.getCountry() : "");
+							+ ( (pm_req.getName() != null)   ? "'" + pm_req.getName() : "'")
+							+ ( (pm_req.getGender() != null) ? ",'" + pm_req.getGender() : "'")
+							+ ( (pm_req.getJob() != null)    ? ",'" + pm_req.getJob() : "'")
+							+ ( (pm_req.getCountry() != null)? ",'" + pm_req.getCountry() : "'");
 					
 					query = "insert into user_data(" + columns + ") " + "values(" + column_data + ")";
 					
@@ -403,14 +408,20 @@ public class ThreadServer implements Runnable {
 					db.printError(e, query);
 				}
 				
-				query = "insert into contact(send_id, receive_id, isAccept) values(?,?,?)";
 				
 				try{
-					db.setPreparedStatement(query);
-					db.getPreparedStatement().setInt(1, send_id);
-					db.getPreparedStatement().setInt(2, rec_id);
-					db.getPreparedStatement().setInt(3, ReplyContactReq.STANDBY);
-					db.getPreparedStatement().executeUpdate();
+					query = "insert into contact(send_id, receive_id, isAccept) "
+							+ "values("
+							+ Integer.toString(send_id)+","
+							+ Integer.toString(rec_id)+","
+							+ Integer.toString(ReplyContactReq.STANDBY)+")";
+					
+					//db.setPreparedStatement(query);
+					//db.getPreparedStatement().setInt(1, send_id);
+					//db.getPreparedStatement().setInt(2, rec_id);
+					//db.getPreparedStatement().setInt(3, ReplyContactReq.STANDBY);
+					//db.getPreparedStatement().executeUpdate();
+					db.getStatement().executeUpdate(query);
 				}catch(SQLException e){
 					db.printError(e, query);
 				}
