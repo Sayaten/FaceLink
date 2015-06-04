@@ -3,13 +3,13 @@ package Server;
 import java.util.ArrayList;
 
 public class GetContactAck {
-	private ArrayList<ImageNameSet> contacts = new ArrayList<ImageNameSet> ();
+	private ArrayList<ContactInfo> contacts = new ArrayList<ContactInfo> ();
 
-	public ArrayList<ImageNameSet> getContacts() {
+	public ArrayList<ContactInfo> getContacts() {
 		return contacts;
 	}
 
-	public void setContacts(ArrayList<ImageNameSet> contacts) {
+	public void setContacts(ArrayList<ContactInfo> contacts) {
 		this.contacts = contacts;
 	}
 }

@@ -39,8 +39,8 @@ public class Packet {
 	public static final String PK_CONTACT_ACK = "CONTACT_ACK";
 	
 	// about Contact reply
-	public static final String PK_CON_REPLY_REQ = "CONTACT_REPLY_REQ";
-	public static final String PK_CON_REPLY_ACK = "CONTACT_REPLY_ACK";
+	public static final String PK_REPLY_CON_REQ = "REPLY_CONTACT_REQ";
+	public static final String PK_REPLY_CON_ACK = "REPLY_CONTACT_ACK";
 	
 	// about get Contact
 	public static final String PK_GET_CON_REQ = "GET_CONTACT_REQ";

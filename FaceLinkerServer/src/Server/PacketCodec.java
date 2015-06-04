@@ -449,7 +449,7 @@ public class PacketCodec {
 	// About Reply Contact req
 	// Encode reply contact request packet
 	public static String endcode_ReplyContactReq(ReplyContactReq pk_data){
-		String data = Packet.PK_CON_REPLY_REQ + Packet.FIELD_DELIM
+		String data = Packet.PK_REPLY_CON_REQ + Packet.FIELD_DELIM
 				+ pk_data.getSend_user() + Packet.FIELD_DELIM
 				+ pk_data.getRec_user() + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getReply()) + Packet.FIELD_DELIM
@@ -470,7 +470,7 @@ public class PacketCodec {
 	// About Reply Contact ack
 	// Encode reply contact ack packet
 	public static String encode_ReplyContactAck(ReplyContactAck pk_data){
-		String data = Packet.PK_CON_REPLY_ACK + Packet.FIELD_DELIM
+		String data = Packet.PK_REPLY_CON_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
 		return data;
@@ -512,9 +512,10 @@ public class PacketCodec {
 		int size = pk_data.getContacts().size();
 		String data = Packet.PK_GET_CON_ACK + Packet.FIELD_DELIM
 					+ Integer.toString(size) + Packet.FIELD_DELIM;
-		for(ImageNameSet contact : pk_data.getContacts()){
-			data += ( contact.getScreen_name() + Packet.FIELD_DELIM
-					+ contact.getImage() + Packet.FIELD_DELIM );
+		for(ContactInfo contact : pk_data.getContacts()){
+			data += ( contact.getContact().getScreen_name() + Packet.FIELD_DELIM
+					+ contact.getContact().getImage() + Packet.FIELD_DELIM
+					+ Integer.toString(contact.getIsAccept()) + Packet.FIELD_DELIM );
 		}
 		data += Packet.PK_DELIM;
 		return data;
@@ -526,7 +527,7 @@ public class PacketCodec {
 		int size = s.nextInt();
 		
 		for(int i = 0 ; i < size ; ++i){
-			dst.getContacts().add(new ImageNameSet(s.next(), s.next()));
+			dst.getContacts().add(new ContactInfo( new ImageNameSet(s.next(), s.next()), s.nextInt() ));
 		}
 		
 		return dst;
