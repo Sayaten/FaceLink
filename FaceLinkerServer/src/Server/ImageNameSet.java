@@ -1,13 +1,13 @@
 package Server;
 
-public class IdealType {
+public class ImageNameSet {
 	private String screen_name;
 	private String image;
 	
-	public IdealType(){
+	public ImageNameSet(){
 		
 	}
-	public IdealType(String screen_name, String image){
+	public ImageNameSet(String screen_name, String image){
 		this.screen_name = screen_name;
 		this.image = image;
 	}
