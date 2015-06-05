@@ -43,6 +43,11 @@ public class ThreadServer implements Runnable {
 
 				handler(rec_packet, out);
 				if(rec_packet.getType().compareTo(Packet.PK_PART_GET_CON) != 0) break;
+				while (true) {
+					inputData = PacketCodec.read_delim(in);
+					if (inputData.charAt(inputData.length() - 1) == '?')
+						break;
+				}
 			}
 			in.close();
 			out.close();
