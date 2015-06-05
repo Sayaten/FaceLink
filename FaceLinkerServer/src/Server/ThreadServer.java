@@ -38,10 +38,12 @@ public class ThreadServer implements Runnable {
 					break;
 			}
 
-			rec_packet = PacketCodec.decode_Header(inputData);
+			while(true){
+				rec_packet = PacketCodec.decode_Header(inputData);
 
-			handler(rec_packet, out);
-			
+				handler(rec_packet, out);
+				if(rec_packet.getType().compareTo(Packet.PK_PART_GET_CON) != 0) break;
+			}
 			in.close();
 			out.close();
 			clientSocket.close();
@@ -281,6 +283,9 @@ public class ThreadServer implements Runnable {
 				break;
 			case Packet.PK_PART_GET_REQ:
 				PartGetReq pg_req = PacketCodec.decode_PartGetReq(src.getData());
+				
+				if(pg_req.getPart_type().compareTo(PartGetReq.STOP) == 0) break;
+				
 				int count = 1;
 				
 				query = "select count(*) from login_data";
@@ -309,8 +314,6 @@ public class ThreadServer implements Runnable {
 					db.printError(e, query);
 				}
 				
-				
-				
 				byte_image = ImageCodec.loadImageToByteArray("part", Integer.toString(user_id) + "_" + pg_req.getPart_type()+".jpg");
 				part_image = bs64.encode(byte_image);
 				
@@ -325,6 +328,8 @@ public class ThreadServer implements Runnable {
 				}finally{
 					out.close();
 				}
+				
+				src.setType(Packet.PK_PART_GET_CON);
 				
 				break;
 			case Packet.PK_IDEAL_REG_REQ:

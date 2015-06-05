@@ -25,6 +25,7 @@ public class Packet {
 	// about part get
 	public static final String PK_PART_GET_REQ = "PART_GET_REQ";
 	public static final String PK_PART_GET_ACK = "PART_GET_ACK";
+	public static final String PK_PART_GET_CON = "PART_GET_CON";
 	
 	// about ideal type register
 	public static final String PK_IDEAL_REG_REQ = "IDEAL_REGISTER_REQ";
