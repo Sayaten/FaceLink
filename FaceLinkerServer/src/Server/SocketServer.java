@@ -26,6 +26,7 @@ public class SocketServer {
 					threadServer = new ThreadServer(clientSocket, true);
 					thread = new Thread(threadServer);
 					thread.start();
+					clientSocket = null;
 				}
 			}
 		}	

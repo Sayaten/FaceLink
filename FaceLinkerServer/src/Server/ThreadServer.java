@@ -20,7 +20,7 @@ public class ThreadServer implements Runnable {
 	
 	String inputData;
 	Packet rec_packet;
-	
+
 	public ThreadServer(Socket clientSocket, boolean isContinous) throws IOException{
 		this.clientSocket = clientSocket;
 		this.isContinous = isContinous;
