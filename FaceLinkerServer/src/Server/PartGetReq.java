@@ -2,7 +2,7 @@ package Server;
 
 public class PartGetReq {
 	public static final String EYES = "eyes";
-	public static final String NOSE = "face";
+	public static final String NOSE = "nose";
 	public static final String MOUTH = "mouth";
 	public static final String FACE = "face";
 	
