@@ -28,12 +28,24 @@ public class ThreadServer implements Runnable {
 		inputData = "";
 
 		System.out.println("Client Connect");
-		in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-		out = new PrintWriter(clientSocket.getOutputStream(), true);
 	}
+
+	public ThreadServer(ServerSocket serverSocket, boolean isContinous) throws IOException{
+		clientSocket = serverSocket.accept();
+		this.isContinous = isContinous;
+		
+		inputData = "";
+
+		System.out.println("Client Connect");
+	}
+
 	
 	public void run(){
+
 		try{
+			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			out = new PrintWriter(clientSocket.getOutputStream(), true);
+			
 			while(isContinous){
 				while (true) {
 					inputData = PacketCodec.read_delim(in);
@@ -41,9 +53,9 @@ public class ThreadServer implements Runnable {
 						break;
 				}
 				rec_packet = PacketCodec.decode_Header(inputData);
-
 				isContinous = handler(rec_packet, out);
 			}
+
 			in.close();
 			out.close();
 			clientSocket.close();
