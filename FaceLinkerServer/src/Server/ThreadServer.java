@@ -47,11 +47,11 @@ public class ThreadServer implements Runnable {
 			out = new PrintWriter(clientSocket.getOutputStream(), true);
 			
 			while(isContinous){
-				while (true) {
+				//while (true) {
 					inputData = PacketCodec.read_delim(in);
-					if (inputData.charAt(inputData.length() - 1) == '?')
-						break;
-				}
+				//	if (inputData.charAt(inputData.length() - 1) == '?')
+				//		break;
+				//}
 				rec_packet = PacketCodec.decode_Header(inputData);
 				isContinous = handler(rec_packet, out);
 			}
@@ -105,8 +105,6 @@ public class ThreadServer implements Runnable {
 					out.println(output);
 				}catch(Exception e){
 					e.printStackTrace();
-				}finally{
-					out.close();
 				}
 				break;
 			case Packet.PK_LOGIN_REQ:
@@ -165,8 +163,6 @@ public class ThreadServer implements Runnable {
 					out.println(output);
 				}catch(Exception e){
 					e.printStackTrace();
-				}finally{
-					out.close();
 				}
 				break;
 			case Packet.PK_PRO_WRITE_REQ:
@@ -201,8 +197,6 @@ public class ThreadServer implements Runnable {
 					out.println(output);
 				}catch(Exception e){
 					e.printStackTrace();
-				}finally{
-					out.close();
 				}
 				break;
 			case Packet.PK_PRO_MODIFY_REQ:
@@ -247,8 +241,6 @@ public class ThreadServer implements Runnable {
 					out.println(output);
 				}catch(Exception e){
 					e.printStackTrace();
-				}finally{
-					out.close();
 				}
 				break;
 			case Packet.PK_PART_REG_REQ:
@@ -290,8 +282,6 @@ public class ThreadServer implements Runnable {
 					out.println(output);
 				}catch(Exception e){
 					e.printStackTrace();
-				}finally{
-					out.close();
 				}
 				break;
 			case Packet.PK_PART_GET_REQ:
@@ -338,11 +328,9 @@ public class ThreadServer implements Runnable {
 					out.println(output);
 				}catch(Exception e){
 					e.printStackTrace();
-				}finally{
-					out.close();
 				}
 				
-				src.setType(Packet.PK_PART_GET_CON);
+				//src.setType(Packet.PK_PART_GET_CON);
 				
 				break;
 			case Packet.PK_IDEAL_REG_REQ:
@@ -372,9 +360,8 @@ public class ThreadServer implements Runnable {
 					out.println(output);
 				}catch(Exception e){
 					e.printStackTrace();
-				}finally{
-					out.close();
 				}
+				
 				break;
 			case Packet.PK_IDEAL_SCH_REQ:
 				IdealTypeSearchReq its_req = PacketCodec.decode_IdealTypeSearchReq(src.getData());
@@ -415,9 +402,9 @@ public class ThreadServer implements Runnable {
 					out.println(output);
 				}catch(Exception e){
 					e.printStackTrace();
-				}finally{
-					out.close();
 				}
+				
+				break;
 			case Packet.PK_CONTACT_REQ:
 				ContactReq c_req = PacketCodec.decode_ContactReq(src.getData());
 				send_id = 0;
@@ -469,9 +456,8 @@ public class ThreadServer implements Runnable {
 					out.println(output);
 				}catch(Exception e){
 					e.printStackTrace();
-				}finally{
-					out.close();
 				}
+				
 				break;
 			case Packet.PK_REPLY_CON_REQ:
 				ReplyContactReq rc_req = PacketCodec.decode_ReplyContactReq(src.getData());
@@ -526,9 +512,8 @@ public class ThreadServer implements Runnable {
 					out.println(output);
 				}catch(Exception e){
 					e.printStackTrace();
-				}finally{
-					out.close();
 				}
+
 				break;
 			case Packet.PK_GET_CON_REQ:
 				GetContactReq gc_req = PacketCodec.decode_GetContactReq(src.getData());
@@ -584,8 +569,6 @@ public class ThreadServer implements Runnable {
 					out.println(output);
 				}catch(Exception e){
 					e.printStackTrace();
-				}finally{
-					out.close();
 				}
 				break;
 			case Packet.PK_CONNECTION_END:
