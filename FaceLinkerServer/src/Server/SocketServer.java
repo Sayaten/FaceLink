@@ -20,7 +20,6 @@ public class SocketServer {
 			serverSocket = new ServerSocket(PORT);
 			serverSocket.setReuseAddress(true);
 			
-			/*
 			while(true) {
 				clientSocket = serverSocket.accept();
 				if(clientSocket != null){
@@ -30,8 +29,7 @@ public class SocketServer {
 					clientSocket = null;
 				}
 			}
-			*/
-			
+			/*
 			while(true){
 				if(Thread.activeCount() < 5)
 				{
@@ -40,6 +38,7 @@ public class SocketServer {
 					thread.start();
 				}
 			}
+			*/
 		}	
 	}
 }
