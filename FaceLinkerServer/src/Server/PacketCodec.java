@@ -548,4 +548,25 @@ public class PacketCodec {
 		
 		return dst;
 	}
+	
+	// About End of Connection
+	// Encode End of Connection Req
+	public static String encode_ConnectionEndReq(ConnectionEndReq pk_data){
+		String data = Packet.PK_CONNECTION_END + Packet.FIELD_DELIM
+				+ pk_data.getIsEnd() + Packet.FIELD_DELIM
+				+ Packet.PK_DELIM;
+		return data;
+	}
+	
+	// Decode End of Connection Req
+	public static ConnectionEndReq decode_ConnectionEndReq(String pk_data){
+		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
+		ConnectionEndReq dst = new ConnectionEndReq();
+		
+		dst.setIsEnd(s.next());
+
+		return dst;
+	}
+	
+	
 }

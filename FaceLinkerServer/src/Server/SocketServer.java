@@ -23,7 +23,7 @@ public class SocketServer {
 			while(true) {
 				clientSocket = serverSocket.accept();
 				if(clientSocket != null){
-					threadServer = new ThreadServer(clientSocket);
+					threadServer = new ThreadServer(clientSocket, true);
 					thread = new Thread(threadServer);
 					thread.start();
 				}

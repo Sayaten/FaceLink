@@ -16,13 +16,15 @@ public class ThreadServer implements Runnable {
 	private Socket clientSocket = null;
 	private PrintWriter out = null;
 	private BufferedReader in = null;
+	private boolean isContinous = false;
 	
 	String inputData;
 	Packet rec_packet;
 	
-	public ThreadServer(Socket clientSocket) throws IOException{
+	public ThreadServer(Socket clientSocket, boolean isContinous) throws IOException{
 		this.clientSocket = clientSocket;
-			
+		this.isContinous = isContinous;
+		
 		inputData = "";
 
 		System.out.println("Client Connect");
@@ -32,32 +34,25 @@ public class ThreadServer implements Runnable {
 	
 	public void run(){
 		try{
-			while (true) {
-				inputData = PacketCodec.read_delim(in);
-				if (inputData.charAt(inputData.length() - 1) == '?')
-					break;
-			}
-
-			//while(true){
+			while(isContinous){
+				while (true) {
+					inputData = PacketCodec.read_delim(in);
+					if (inputData.charAt(inputData.length() - 1) == '?')
+						break;
+				}
 				rec_packet = PacketCodec.decode_Header(inputData);
 
-				handler(rec_packet, out);
-				//if(rec_packet.getType().compareTo(Packet.PK_PART_GET_CON) != 0) break;
-				//while (true) {
-				//	inputData = PacketCodec.read_delim(in);
-				//	if (inputData.charAt(inputData.length() - 1) == '?')
-				//		break;
-				//}
-			//}
+				isContinous = handler(rec_packet, out);
+			}
 			in.close();
 			out.close();
 			clientSocket.close();
-		}catch(IOException e){
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
 	
-	public void handler(Packet src, PrintWriter out) throws IOException{
+	public boolean handler(Packet src, PrintWriter out) throws IOException{
 		String part_image = "";
 		String profile_image = "";
 		String ideal_image = "";
@@ -65,6 +60,7 @@ public class ThreadServer implements Runnable {
 		String password = "";
 		String send_user = "";
 		String rec_user = "";
+		isContinous = true;
 		Database db = new Database();
 		ResultSet rs;
 		byte[] byte_image = null;
@@ -76,7 +72,7 @@ public class ThreadServer implements Runnable {
 		
 		if(!db.connect()){
 			System.out.println("DB Error!!");
-			return;
+			return isContinous;
 		}
 		
 		System.out.println("Packet Type: "+src.getType());
@@ -580,8 +576,12 @@ public class ThreadServer implements Runnable {
 					out.close();
 				}
 				break;
+			case Packet.PK_CONNECTION_END:
+				ConnectionEndReq ce_req = PacketCodec.decode_ConnectionEndReq(src.getData());
+				if(ce_req.getIsEnd().compareTo(ConnectionEndReq.END) == 0) isContinous = false;
 			default:
 				System.out.println("Not Defined Packet Type!!!!");
 		}
+		return isContinous;
 	}
 }

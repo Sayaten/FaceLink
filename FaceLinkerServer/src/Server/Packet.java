@@ -47,9 +47,13 @@ public class Packet {
 	public static final String PK_GET_CON_REQ = "GET_CONTACT_REQ";
 	public static final String PK_GET_CON_ACK = "GET_CONTACT_ACK";
 	
+	// about end of connection
+	public static final String PK_CONNECTION_END = "CONNECTION_END";
+	
 	// about packet field delimiter
 	public static final String FIELD_DELIM = "|";
 	public static final String PK_DELIM = "?";
+	
 	
 	// ACK Type
 	public static final int SUCCESS = 0x01;
