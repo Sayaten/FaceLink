@@ -12,7 +12,7 @@ public class PacketCodec {
 		
 		// read character before read delimiter
 		while(in.read(charBuf, 0, 1) != -1){
-			// Packet.PK_DELIM == '\n'
+			// Packet.PK_DELIM == '?'
 			if(charBuf[0] == '?'){
 				readMsg += charBuf[0];
 				isdelim = 1;
@@ -20,6 +20,14 @@ public class PacketCodec {
 			} else {
 				readMsg += charBuf[0];
 				continue;
+			}
+		}
+		
+		// remove '\n'
+		while(in.read(charBuf, 0, 1) != -1)
+		{
+			if(charBuf[0] == '\n'){
+				break;
 			}
 		}
 		
