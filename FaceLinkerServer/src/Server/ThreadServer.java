@@ -17,7 +17,7 @@ public class ThreadServer implements Runnable {
 	private PrintWriter out = null;
 	private BufferedReader in = null;
 	private boolean isContinous = false;
-	
+	private int user_id = 0;
 	String inputData;
 	Packet rec_packet;
 
@@ -56,6 +56,38 @@ public class ThreadServer implements Runnable {
 			out.close();
 			clientSocket.close();
 		}catch(Exception e){
+			if ( rec_packet.getType().compareTo(Packet.PK_JOIN_REQ) == 0 || 
+					rec_packet.getType().compareTo(Packet.PK_PRO_WRITE_REQ) == 0 )
+			{
+				Database db = new Database();
+				String query = "delete from login_data where user_id = " + Integer.toString(user_id);
+				int count = 1;
+				
+				try{
+					db.getStatement().executeUpdate(query);
+				}catch(SQLException sql_e){
+					db.printError(sql_e, query);
+				}
+				
+				query = "select count(*) from login_data";
+				
+				try{
+					ResultSet rs = db.getStatement().executeQuery(query);
+					rs.next();
+					count = rs.getInt(1);
+					rs.close();
+				}catch(SQLException sql_e){
+					db.printError(sql_e, query);
+				}
+				
+				query = "alter table login_data auto_increment = " + Integer.toString(count);
+				
+				try{
+					db.getStatement().executeUpdate(query);
+				}catch(SQLException sql_e){
+					db.printError(sql_e, query);
+				}
+			}
 			e.printStackTrace();
 		}
 	}
@@ -74,7 +106,7 @@ public class ThreadServer implements Runnable {
 		byte[] byte_image = null;
 		String query = "";
 		String output = "";
-		int user_id = 0;
+		//int user_id = 0;
 		int send_id = 0;
 		int rec_id = 0;
 		
@@ -95,6 +127,18 @@ public class ThreadServer implements Runnable {
 				}catch(SQLException e){
 					db.printError(e, query);
 				}
+				
+				query = "select user_id from login_data where screen_name = '" + j_req.getScreen_name() + "'";
+				
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					user_id = rs.getInt("user_id");
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
 				JoinAck j_ack = new JoinAck(Packet.SUCCESS);
 				output = PacketCodec.encode_JoinAck(j_ack);
 				try{ 
