@@ -47,11 +47,7 @@ public class ThreadServer implements Runnable {
 			out = new PrintWriter(clientSocket.getOutputStream(), true);
 			
 			while(isContinous){
-				//while (true) {
-					inputData = PacketCodec.read_delim(in);
-				//	if (inputData.charAt(inputData.length() - 1) == '?')
-				//		break;
-				//}
+				inputData = PacketCodec.read_delim(in);
 				rec_packet = PacketCodec.decode_Header(inputData);
 				isContinous = handler(rec_packet, out);
 			}
@@ -287,8 +283,6 @@ public class ThreadServer implements Runnable {
 			case Packet.PK_PART_GET_REQ:
 				PartGetReq pg_req = PacketCodec.decode_PartGetReq(src.getData());
 				
-				if(pg_req.getPart_type().compareTo(PartGetReq.STOP) == 0) break;
-				
 				int count = 1;
 				
 				query = "select count(*) from login_data";
@@ -329,8 +323,6 @@ public class ThreadServer implements Runnable {
 				}catch(Exception e){
 					e.printStackTrace();
 				}
-				
-				//src.setType(Packet.PK_PART_GET_CON);
 				
 				break;
 			case Packet.PK_IDEAL_REG_REQ:
@@ -440,11 +432,6 @@ public class ThreadServer implements Runnable {
 							+ Integer.toString(rec_id)+","
 							+ Integer.toString(ReplyContactReq.STANDBY)+")";
 					
-					//db.setPreparedStatement(query);
-					//db.getPreparedStatement().setInt(1, send_id);
-					//db.getPreparedStatement().setInt(2, rec_id);
-					//db.getPreparedStatement().setInt(3, ReplyContactReq.STANDBY);
-					//db.getPreparedStatement().executeUpdate();
 					db.getStatement().executeUpdate(query);
 				}catch(SQLException e){
 					db.printError(e, query);
