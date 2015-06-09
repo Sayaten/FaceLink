@@ -100,6 +100,7 @@ public class ThreadServer implements Runnable {
 		String password = "";
 		String send_user = "";
 		String rec_user = "";
+		String thumbnail_image = "";
 		isContinous = true;
 		Database db = new Database();
 		ResultSet rs;
@@ -605,6 +606,47 @@ public class ThreadServer implements Runnable {
 			case Packet.PK_CONNECTION_END:
 				ConnectionEndReq ce_req = PacketCodec.decode_ConnectionEndReq(src.getData());
 				if(ce_req.getIsEnd().compareTo(ConnectionEndReq.END) == 0) isContinous = false;
+				break;
+			case Packet.PK_PRO_GET_REQ:
+				ProfileGetReq prog_req = PacketCodec.decode_ProfileGetReq(src.getData());
+				query = "select user_id from login_data where screen_name = '" + prog_req.getScreen_name() + "'";
+				
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					user_id = rs.getInt("user_id");
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				ProfileGetAck prog_ack = new ProfileGetAck(Packet.SUCCESS);
+				
+				query = "select * from user_data where user_id = " + Integer.toString(user_id);
+				
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					prog_ack.setName(rs.getString("name"));
+					prog_ack.setGender(rs.getString("gender"));
+					prog_ack.setJob(rs.getString("job"));
+					prog_ack.setCountry(rs.getString("country"));
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				byte_image = ImageCodec.loadImageToByteArray("profile", Integer.toString(user_id) + "_thumbnail.jpg");
+				profile_image = bs64.encode(byte_image);
+				prog_ack.setProfile_img(profile_image);
+				
+				output = PacketCodec.encode_ProfileGetAck(prog_ack);
+				try{ 
+					out.println(output);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+				
 			default:
 				System.out.println("Not Defined Packet Type!!!!");
 		}

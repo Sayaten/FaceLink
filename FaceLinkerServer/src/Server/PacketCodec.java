@@ -576,5 +576,49 @@ public class PacketCodec {
 		return dst;
 	}
 	
+	// About Profile Get
+	// Encode Profile Get Req
+	public static String encode_ProfileGetReq(ProfileGetReq pk_data){
+		String data = Packet.PK_PRO_GET_REQ + Packet.FIELD_DELIM
+					+ pk_data.getScreen_name() + Packet.FIELD_DELIM
+					+ Packet.PK_DELIM;
+		return data;
+	}
+	// Decode Profile Get Req
+	public static ProfileGetReq decode_ProfileGetReq(String pk_data){
+		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
+		ProfileGetReq dst = new ProfileGetReq();
+		
+		dst.setScreen_name(s.next());
+
+		return dst;
+	}
 	
+	// Encode Profile Get Ack
+	public static String encode_ProfileGetAck(ProfileGetAck pk_data){
+		String data = Packet.PK_PRO_GET_REQ + Packet.FIELD_DELIM
+					+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
+					+ pk_data.getName() + Packet.FIELD_DELIM
+					+ pk_data.getGender() + Packet.FIELD_DELIM
+					+ pk_data.getJob() + Packet.FIELD_DELIM
+					+ pk_data.getCountry() + Packet.FIELD_DELIM
+					+ pk_data.getProfile_img() + Packet.FIELD_DELIM
+					+ Packet.PK_DELIM;
+		return data;
+	}
+	
+	// Decode Profile Get Ack
+	public static ProfileGetAck decode_ProfileGetAck(String pk_data){
+		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
+		ProfileGetAck dst = new ProfileGetAck();
+		
+		dst.setResult(s.nextInt());
+		dst.setName(s.next());
+		dst.setGender(s.next());
+		dst.setJob(s.next());
+		dst.setCountry(s.next());
+		dst.setProfile_img(s.next());
+		
+		return dst;
+	}
 }

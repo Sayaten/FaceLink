@@ -18,6 +18,10 @@ public class Packet {
 	public static final String PK_PRO_MODIFY_REQ = "PRO_MODIFY_REQ";
 	public static final String PK_PRO_MODIFY_ACK = "PRO_MODIFY_ACK";
 	
+	// about profile get
+	public static final String PK_PRO_GET_REQ = "PRO_GET_REQ";
+	public static final String PK_PRO_GET_ACK = "PRO_GET_ACK";
+	
 	// about part register
 	public static final String PK_PART_REG_REQ = "PART_REGISTER_REQ";
 	public static final String PK_PART_REG_ACK = "PART_REGISTER_ACK";
