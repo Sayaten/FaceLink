@@ -48,23 +48,8 @@ public class ImageCodec {
 		}
 		return bos.toByteArray();
 	}
-
-	public static void saveThumbnailImage (byte[] data, String dir, String name, float ratio){
-		byte[] thumbnail = resizeImage(data, ratio);
-		saveImage(thumbnail, dir, name);
-	}
-
-	public static void saveThumbnailImage (byte[] data, String dir, String name, int width, int height){
-		byte[] thumbnail = resizeImage(data, width, height);
-		saveImage(thumbnail, dir, name);
-	}
 	
-	public static void saveThumbnailImage (byte[] data, String dir, String name, int length, String type){
-		byte[] thumbnail = resizeImage(data, length, type);
-		saveImage(thumbnail, dir, name);
-	}
-	
-	public static byte[] resizeImage(byte[] byteImage, int width, int height){
+	public static void saveThumbnailImage(byte[] byteImage, String dir, String name, int width, int height){
 		ByteArrayInputStream bis = new ByteArrayInputStream(byteImage);
 		BufferedImage image;
 		Image scaledImage;
@@ -72,11 +57,9 @@ public class ImageCodec {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try{
 			image = ImageIO.read(bis);
-			if(height == 0){
-				height = (width * image.getHeight()) / image.getWidth();
-			}
-			if(width == 0){
-				width = (height * image.getWidth()) / image.getHeight();
+			if(height == 0 || width == 0){
+				System.out.println("Unvalid length!!");
+				saveImage(byteImage, dir, name);
 			}
 			scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 			imageBuf = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -87,10 +70,10 @@ public class ImageCodec {
 			e.printStackTrace();
 		}
 		
-		return bos.toByteArray();
+		saveImage(bos.toByteArray(), dir, name);
 	}
 	
-	public static byte[] resizeImage(byte[] byteImage, int length, String type){
+	public static void saveThumbnailImage(byte[] byteImage, String dir, String name, int length, String type){
 		ByteArrayInputStream bis = new ByteArrayInputStream(byteImage);
 		BufferedImage image;
 		Image scaledImage;
@@ -113,17 +96,17 @@ public class ImageCodec {
 				ImageIO.write(imageBuf, "jpg", bos);
 				break;
 			default:
-				System.out.println("Unvalued standard!!");
-				return byteImage;
+				System.out.println("Unvalid type!!");
+				saveImage(byteImage, dir, name);
 			}
 		} catch(IOException e){
 			e.printStackTrace();
 		}
-		
-		return bos.toByteArray();
+
+		saveImage(bos.toByteArray(), dir, name);
 	}
 	
-	public static byte[] resizeImage(byte[] byteImage, float ratio){
+	public static void saveThumbnailImage(byte[] byteImage, String dir, String name, float ratio){
 		ByteArrayInputStream bis = new ByteArrayInputStream(byteImage);
 		BufferedImage image;
 		Image scaledImage;
@@ -133,7 +116,8 @@ public class ImageCodec {
 			image = ImageIO.read(bis);
 			
 			if (ratio <= 0.0f){
-				return byteImage;
+				System.out.println("Unvaild ratio!!");
+				saveImage(bos.toByteArray(), dir, name);
 			}
 			
 			scaledImage = image.getScaledInstance((int)(image.getWidth() * ratio), (int)(image.getHeight() * ratio), Image.SCALE_SMOOTH);
@@ -145,7 +129,7 @@ public class ImageCodec {
 		} catch(IOException e){
 			e.printStackTrace();
 		}
-		
-		return bos.toByteArray();
+
+		saveImage(bos.toByteArray(), dir, name);
 	}
 }
