@@ -554,11 +554,12 @@ public class ThreadServer implements Runnable {
 				
 				try{
 					rs = db.getStatement().executeQuery(query);
-					rs.next();
-					temp = new int[2]; // 0 == send_id  1 == isAccept 
-					temp[0] = rs.getInt("send_id");
-					temp[1] = rs.getInt("isAccept");
-					con_arr.add(temp);
+					while(rs.next()){
+						temp = new int[2]; // 0 == send_id  1 == isAccept 
+						temp[0] = rs.getInt("send_id");
+						temp[1] = rs.getInt("isAccept");
+						con_arr.add(temp);
+					}
 					rs.close();
 				}catch(SQLException e){
 					db.printError(e, query);
