@@ -374,7 +374,7 @@ public class ThreadServer implements Runnable {
 				break;
 			case Packet.PK_IDEAL_SCH_REQ:
 				IdealTypeSearchReq its_req = PacketCodec.decode_IdealTypeSearchReq(src.getData());
-				ArrayList<ImageSimilarity> image_arr = ComparisonSimilarity.getSimilarImage(its_req.getScreen_name(), ComparisonSimilarity.IMG_DIR);
+				ArrayList<ImageSimilarity> image_arr = ComparisonSimilarity.getSimilarImage(its_req.getScreen_name());
 				ArrayList<ImageNameSet> ideal_arr = new ArrayList<ImageNameSet> ();
 				int begin = 0;
 				int end = 0;
