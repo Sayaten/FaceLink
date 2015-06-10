@@ -28,7 +28,7 @@ public class Database {
 	
 	public boolean connect(){
 		try{
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FaceLinker","root", LuxandKey.DBKEY);
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FaceLinker","root", Key.DBKEY);
 			st = con.createStatement();
 		}catch(SQLException e){
 			System.out.println("SQLException: " + e.getMessage());
@@ -152,7 +152,18 @@ public class Database {
 		System.out.println("Query: " + query);
 	}
 	
-	//public HashMap<String, Object> execute(){
-	//s	
-	//}
+	public void clear(){
+		String query = "";
+		try{
+			query = "delete from login_data";
+			
+			st.executeQuery(query);
+			
+			query = "alter table login_data auto_increment = 1";
+			
+			st.executeQuery(query);
+		}catch(SQLException e){
+			printError(e, query);
+		}
+	}
 }
