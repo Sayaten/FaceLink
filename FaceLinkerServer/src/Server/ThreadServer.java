@@ -447,7 +447,7 @@ public class ThreadServer implements Runnable {
 							+ "values("
 							+ Integer.toString(send_id)+","
 							+ Integer.toString(rec_id)+","
-							+ Integer.toString(ReplyContactReq.STANDBY)+")";
+							+ Integer.toString(ContactInfo.STANDBY)+")";
 					
 					db.getStatement().executeUpdate(query);
 				}catch(SQLException e){
@@ -491,7 +491,7 @@ public class ThreadServer implements Runnable {
 					db.printError(e, query);
 				}
 				
-				if(rc_req.getReply() == ReplyContactReq.REJECT){
+				if(rc_req.getReply() == ContactInfo.REJECT){
 					query = "delete from contact where send_id = " + Integer.toString(send_id)
 							+" and receive_id = " + Integer.toString(rec_id);
 					try{
@@ -499,7 +499,7 @@ public class ThreadServer implements Runnable {
 					}catch(SQLException e){
 						db.printError(e, query);
 					}
-				}else if(rc_req.getReply() == ReplyContactReq.ACCEPT){
+				}else if(rc_req.getReply() == ContactInfo.ACCEPT){
 					query = "update contact set isAccept = "+Integer.toString(rc_req.getReply())
 							+" where send_id = " + Integer.toString(send_id)
 							+" and receive_id = " + Integer.toString(rec_id);

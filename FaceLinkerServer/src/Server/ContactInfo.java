@@ -4,6 +4,10 @@ public class ContactInfo {
 	private ImageNameSet contact;
 	private int isAccept;
 	
+	public static final int REJECT = 0x00;
+	public static final int ACCEPT = 0x01;
+	public static final int STANDBY = 0x02;
+	
 	public ContactInfo(){
 		
 	}
