@@ -46,9 +46,112 @@ public class ComparisonSimilarity {
 		"FSDKE_UNSUPPORTED_TEMPLATE_VERSION"
 	};
 	public static final String IMG_DIR = "/home/saya/Project/FLImages/profile";
-	public static final String KEY = LuxandKey.KEY;
-	
-	public static ArrayList<ImageSimilarity> getSimilarImage(String sample){
+	public static final String KEY = Key.KEY;
+
+	public static void compareWithOneSample(String sample){
+		HImage imgOrg = new HImage();
+		HImage imgCmp = new HImage();
+		TFacePosition.ByReference fpOrg = new TFacePosition.ByReference();
+		TFacePosition.ByReference fpCmp = new TFacePosition.ByReference();
+		FSDK_FaceTemplate.ByReference ftOrg = new FSDK_FaceTemplate.ByReference();
+		FSDK_FaceTemplate.ByReference ftCmp = new FSDK_FaceTemplate.ByReference();
+		int result;
+		float[] similarity = new float[1];
+		float maxSim = 0.0f;
+		String pair = null;
+		int nFile;
+		String[] pics = null;
+		String temp = null;
+		
+		try{
+			BufferedWriter writer = new BufferedWriter(new FileWriter("BadPicsPair.txt"));
+			
+			pics = getFileNames(IMG_DIR);
+			
+			initFaceSDK();
+			
+			FSDK.SetFaceDetectionParameters(false, false, 500);
+			
+			for(int i = 0 ; i < pics.length ; ++i){
+				if(pics[i].compareTo(IMG_DIR + sample) == 0){
+					temp = pics[0];
+					pics[0] = pics[i];
+					pics[i] = temp;
+				}
+			}
+			
+			result = FSDK.LoadImageFromFile(imgOrg, pics[0]);
+			if(result != FSDK.FSDKE_OK)
+			{
+				System.out.println("============= Input Sample is Bad ============\n");
+				return;
+			}
+			result = FSDK.DetectFace(imgOrg, fpOrg);
+			if(result != FSDK.FSDKE_OK)
+			{
+				System.out.println("============= Input Sample is Bad ============\n");
+				return;
+			}
+			result = FSDK.GetFaceTemplateInRegion(imgOrg, fpOrg, ftOrg);
+			if(result != FSDK.FSDKE_OK)
+			{
+				System.out.println("============= Input Sample is Bad ============\n");
+				return;
+			}
+			for(int i = 1 ; i < pics.length ; ++i)
+			{
+				// load 1 img
+				result = FSDK.LoadImageFromFile(imgCmp, pics[i]);
+			
+				// find face
+				result = FSDK.DetectFace(imgCmp, fpCmp);
+				if(result != FSDK.FSDKE_OK)
+				{
+					System.out.println("============= break this comparison =============\n");
+					if(result != FSDK.FSDKE_OK) writer.write(pics[i]+"\n");
+
+					FSDK.FreeImage(imgCmp);
+					break;
+				}
+				
+				FSDK.GetFaceTemplateInRegion(imgCmp, fpCmp, ftCmp);
+				
+				if(result != FSDK.FSDKE_OK)
+				{
+					System.out.println("============= break this comparison =============");
+					System.out.println(pics[i]+"\n");
+					FSDK.FreeImage(imgCmp);
+					break;
+				}
+
+				FSDK.MatchFaces(ftOrg, ftCmp, similarity);
+			
+				System.out.println("=================== Similarity ==================");
+				System.out.println("Similarity is " + similarity[0] * 100 + "%\n");
+
+				if(similarity[0] >= maxSim)
+				{
+					maxSim = similarity[0];
+					
+					pair = pics[i];
+				}
+				FSDK.FreeImage(imgCmp);
+			}
+			writer.close();
+			
+			System.out.println("===================== Result ====================");
+			System.out.println("Total " + pics.length + " files");
+			System.out.println("Max Similarity: " + maxSim * 100 + "%");
+			
+			System.out.println(pics[0]);
+			System.out.println(pair);
+			
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+	}
+		
+	public static ArrayList<ImageSimilarity> getSimilarImage(String sample, String dir){
 		ArrayList<ImageSimilarity> similar_images = new ArrayList<ImageSimilarity>();
 		
 		HImage imgOrg = new HImage();
@@ -69,14 +172,14 @@ public class ComparisonSimilarity {
 		try{
 			BufferedWriter writer = new BufferedWriter(new FileWriter("BadPicsPair.txt"));
 			
-			pics = getFileNames();
+			pics = getFileNames(dir);
 			
 			initFaceSDK();
 			
 			FSDK.SetFaceDetectionParameters(false, false, 500);
 			
 			for(int i = 0 ; i < pics.length ; ++i){
-				if(pics[i].compareTo(IMG_DIR + sample) == 0){
+				if(pics[i].compareTo(dir + sample) == 0){
 					temp = pics[0];
 					pics[0] = pics[i];
 					pics[i] = temp;
@@ -100,6 +203,7 @@ public class ComparisonSimilarity {
 			}
 			for(int i = 1 ; i < pics.length ; ++i)
 			{
+				System.out.println("NEW TEST - "+i);
 				// load 1 img
 				result = FSDK.LoadImageFromFile(imgCmp, pics[i]);
 			
@@ -137,145 +241,22 @@ public class ComparisonSimilarity {
 		
 		return similar_images;
 	}
-	
-	public static void compareWithOneSample(String sample){
-		HImage imgOrg = new HImage();
-		HImage imgCmp = new HImage();
-		TFacePosition.ByReference fpOrg = new TFacePosition.ByReference();
-		TFacePosition.ByReference fpCmp = new TFacePosition.ByReference();
-		FSDK_FaceTemplate.ByReference ftOrg = new FSDK_FaceTemplate.ByReference();
-		FSDK_FaceTemplate.ByReference ftCmp = new FSDK_FaceTemplate.ByReference();
-		int result;
-		float[] similarity = new float[1];
-		float maxSim = 0.0f;
-		String pair = null;
-		int nFile;
-		String[] pics = null;
-		String temp = null;
-		
-		try{
-			BufferedWriter writer = new BufferedWriter(new FileWriter("BadPicsPair.txt"));
-			
-			pics = getFileNames();
-			
-			initFaceSDK();
-			
-			FSDK.SetFaceDetectionParameters(false, false, 500);
-			
-			for(int i = 0 ; i < pics.length ; ++i){
-				if(pics[i].compareTo(IMG_DIR + sample) == 0){
-					temp = pics[0];
-					pics[0] = pics[i];
-					pics[i] = temp;
-				}
-			}
-			
-			result = FSDK.LoadImageFromFile(imgOrg, pics[0]);
-			if(result != FSDK.FSDKE_OK)
-			{
-				System.out.println("============= Input Sample is Bad ============\n");
-				return;
-			}
-			result = FSDK.DetectFace(imgOrg, fpOrg);
-			if(result != FSDK.FSDKE_OK)
-			{
-				System.out.println("============= Input Sample is Bad ============\n");
-				return;
-			}
-			result = FSDK.GetFaceTemplateInRegion(imgOrg, fpOrg, ftOrg);
-			if(result != FSDK.FSDKE_OK)
-			{
-				System.out.println("============= Input Sample is Bad ============\n");
-				return;
-			}
-			for(int i = 1 ; i < pics.length ; ++i)
-			{
-				//System.out.println("=================== This pair ====================");
-				//System.out.println(pics[i]+"\n");
 
-				// load 1 img
-				result = FSDK.LoadImageFromFile(imgCmp, pics[i]);
-			
-				//System.out.println("=================== Load Image ===================");
-				//System.out.println(ERRORCODE[-result] + "\n");
-			
-				// find face
-				result = FSDK.DetectFace(imgCmp, fpCmp);
-				if(result != FSDK.FSDKE_OK)
-				{
-					System.out.println("============= break this comparison =============\n");
-					if(result != FSDK.FSDKE_OK) writer.write(pics[i]+"\n");
+	public static int initFaceSDK()
+	{
+		int ret = 0;
+		ret = FSDK.ActivateLibrary(KEY);
 
-					FSDK.FreeImage(imgCmp);
-					break;
-				}
-				
-				//System.out.println("=================== Find Faces ===================");
-				//System.out.println(ERRORCODE[-result]+"\n");
-			
-				FSDK.GetFaceTemplateInRegion(imgCmp, fpCmp, ftCmp);
-				
-				if(result != FSDK.FSDKE_OK)
-				{
-					System.out.println("============= break this comparison =============");
-					System.out.println(pics[i]+"\n");
-					FSDK.FreeImage(imgCmp);
-					break;
-				}
+		FSDK.Initialize();
 
-				FSDK.MatchFaces(ftOrg, ftCmp, similarity);
-			
-				System.out.println("=================== Similarity ==================");
-				System.out.println("Similarity is " + similarity[0] * 100 + "%\n");
-
-				if(similarity[0] >= maxSim)
-				{
-					maxSim = similarity[0];
-					
-					pair = pics[i];
-				}
-				FSDK.FreeImage(imgCmp);
-			}
-			writer.close();
-			
-			System.out.println("===================== Result ====================");
-			System.out.println("Total " + pics.length + " files");
-			System.out.println("Max Similarity: " + maxSim * 100 + "%");
-			
-			System.out.println(pics[0]);
-			System.out.println(pair);
-			
-		}catch(IOException e){
-			e.printStackTrace();
-		}
+		return ret;
 	}
 	
-	public static void compareAllSample(){
-		HImage imgOrg = null, imgCmp = null;
-		TFacePosition fpOrg = null, fpCmp = null;
-		FSDK_FaceTemplate ftOrg = null, ftCmp = null;
-		int result1, result2;
-		float similarity, maxSim;
-		String pair1 = null, pair2 = null;
-		int nFile;
-		String[] pics = null;
-		
-		try{
-			BufferedWriter writer = new BufferedWriter(new FileWriter("BadPicsPair.txt"));
-			
-			
-			
-			writer.close();
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-	}
-	
-	public static String[] getFileNames()
+	public static String[] getFileNames(String dir)
 	{
 		String[] files = null;
 		
-		File dirFile = new File(IMG_DIR);
+		File dirFile = new File(dir);
 		File []fileList = dirFile.listFiles();
 		
 		files = new String[fileList.length];
@@ -285,15 +266,5 @@ public class ComparisonSimilarity {
 		}
 		
 		return files;
-	}
-	
-	public static int initFaceSDK()
-	{
-		int ret = 0;
-		ret = FSDK.ActivateLibrary(KEY);
-
-		FSDK.Initialize();
-
-		return ret;
 	}
 }
