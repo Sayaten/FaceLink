@@ -550,7 +550,7 @@ public class ThreadServer implements Runnable {
 				ArrayList<int[]> con_arr = new ArrayList<int[]> ();
 				int[] temp = null;
 				
-				query = "select send_id, isAccept from contact where user_id = " + Integer.toString(user_id);
+				query = "select send_id, isAccept from contact where receive_id = " + Integer.toString(user_id);
 				
 				try{
 					rs = db.getStatement().executeQuery(query);
