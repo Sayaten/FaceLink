@@ -430,7 +430,7 @@ public class PacketCodec {
 	
 	// About Contact req
 	// Encode contact request packet
-	public static String endcode_ContactReq(ContactReq pk_data){
+	public static String encode_ContactReq(ContactReq pk_data){
 		String data = Packet.PK_CONTACT_REQ + Packet.FIELD_DELIM
 				+ pk_data.getSend_user() + Packet.FIELD_DELIM
 				+ pk_data.getRec_user() + Packet.FIELD_DELIM
