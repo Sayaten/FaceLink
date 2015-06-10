@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class IdealTypeSearchAck {
 	private ArrayList<ImageNameSet> ideal_types;
 	
-	IdealTypeSearchAck() {
+	public IdealTypeSearchAck() {
 		ideal_types = new ArrayList<ImageNameSet> (5);
 	}
 	public ArrayList<ImageNameSet> getIdeal_types() {
