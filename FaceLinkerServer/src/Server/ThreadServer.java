@@ -374,10 +374,23 @@ public class ThreadServer implements Runnable {
 				break;
 			case Packet.PK_IDEAL_SCH_REQ:
 				IdealTypeSearchReq its_req = PacketCodec.decode_IdealTypeSearchReq(src.getData());
-				ArrayList<ImageSimilarity> image_arr = ComparisonSimilarity.getSimilarImage(its_req.getScreen_name());
-				ArrayList<ImageNameSet> ideal_arr = new ArrayList<ImageNameSet> ();
 				int begin = 0;
 				int end = 0;
+				
+				ArrayList<ImageNameSet> ideal_arr = new ArrayList<ImageNameSet> ();
+				ArrayList<ImageSimilarity> image_arr = null;
+						
+				query = "select user_id from login_data where screen_name = '" + its_req.getScreen_name() + "'";		
+				try{
+					rs = db.getStatement().executeQuery(query);
+					rs.next();
+					user_id = rs.getInt("user_id");
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				image_arr = ComparisonSimilarity.getSimilarImage(Integer.toString(user_id) + "_ideal_type.jpg");
 				
 				QuickSort.quickSort(image_arr, 0, image_arr.size() - 1);
 				
@@ -385,7 +398,7 @@ public class ThreadServer implements Runnable {
 					end = image_arr.get(i).getName().indexOf('_') - 1;
 				
 					user_id = Integer.parseInt(image_arr.get(i).getName().substring(begin, end));
-				
+					
 					query = "select screen_name from login_data "
 							+ "where user_id = '"+ Integer.toString(user_id) + "';";
 					
@@ -440,7 +453,6 @@ public class ThreadServer implements Runnable {
 				}catch(SQLException e){
 					db.printError(e, query);
 				}
-				
 				
 				try{
 					query = "insert into contact(send_id, receive_id, isAccept) "

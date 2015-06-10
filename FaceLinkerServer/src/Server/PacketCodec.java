@@ -472,7 +472,7 @@ public class PacketCodec {
 	
 	// About Reply Contact req
 	// Encode reply contact request packet
-	public static String endcode_ReplyContactReq(ReplyContactReq pk_data){
+	public static String encode_ReplyContactReq(ReplyContactReq pk_data){
 		String data = Packet.PK_REPLY_CON_REQ + Packet.FIELD_DELIM
 				+ pk_data.getSend_user() + Packet.FIELD_DELIM
 				+ pk_data.getRec_user() + Packet.FIELD_DELIM
@@ -515,7 +515,7 @@ public class PacketCodec {
 	
 	// About Get Contact req
 	// Encode get contact request packet
-	public static String endcode_GetContactReq(GetContactReq pk_data){
+	public static String encode_GetContactReq(GetContactReq pk_data){
 		String data = Packet.PK_GET_CON_REQ + Packet.FIELD_DELIM
 				+ pk_data.getScreen_name() + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;

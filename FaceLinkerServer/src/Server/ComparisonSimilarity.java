@@ -46,7 +46,7 @@ public class ComparisonSimilarity {
 		"FSDKE_UNSUPPORTED_TEMPLATE_VERSION"
 	};
 	public static final String IMG_DIR = "/home/saya/Project/FLImages/profile";
-	public static final String KEY = LuxandKey.KEY;
+	public static final String KEY = Key.KEY;
 	
 	public static ArrayList<ImageSimilarity> getSimilarImage(String sample){
 		ArrayList<ImageSimilarity> similar_images = new ArrayList<ImageSimilarity>();
@@ -66,6 +66,8 @@ public class ComparisonSimilarity {
 		String[] pics = null;
 		String temp = null;
 		
+		int user_id = Integer.parseInt(sample.substring(0, sample.indexOf('_') - 1));
+		
 		try{
 			BufferedWriter writer = new BufferedWriter(new FileWriter("BadPicsPair.txt"));
 			
@@ -76,14 +78,14 @@ public class ComparisonSimilarity {
 			FSDK.SetFaceDetectionParameters(false, false, 500);
 			
 			for(int i = 0 ; i < pics.length ; ++i){
-				if(pics[i].compareTo(IMG_DIR + sample) == 0){
+				if(pics[i].compareTo(IMG_DIR + Integer.toString(user_id) + "_profile.jpg") == 0){
 					temp = pics[0];
 					pics[0] = pics[i];
 					pics[i] = temp;
 				}
 			}
 			
-			result = FSDK.LoadImageFromFile(imgOrg, pics[0]);
+			result = FSDK.LoadImageFromFile(imgOrg, IMG_DIR + sample);
 			if(result != FSDK.FSDKE_OK)
 			{
 				return null;
