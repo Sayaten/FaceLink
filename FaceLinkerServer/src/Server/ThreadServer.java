@@ -56,38 +56,6 @@ public class ThreadServer implements Runnable {
 			out.close();
 			clientSocket.close();
 		}catch(Exception e){
-			if ( rec_packet.getType().compareTo(Packet.PK_JOIN_REQ) == 0 || 
-					rec_packet.getType().compareTo(Packet.PK_PRO_WRITE_REQ) == 0 )
-			{
-				Database db = new Database();
-				String query = "delete from login_data where user_id = " + Integer.toString(user_id);
-				int count = 1;
-				
-				try{
-					db.getStatement().executeUpdate(query);
-				}catch(SQLException sql_e){
-					db.printError(sql_e, query);
-				}
-				
-				query = "select count(*) from login_data";
-				
-				try{
-					ResultSet rs = db.getStatement().executeQuery(query);
-					rs.next();
-					count = rs.getInt(1);
-					rs.close();
-				}catch(SQLException sql_e){
-					db.printError(sql_e, query);
-				}
-				
-				query = "alter table login_data auto_increment = " + Integer.toString(count);
-				
-				try{
-					db.getStatement().executeUpdate(query);
-				}catch(SQLException sql_e){
-					db.printError(sql_e, query);
-				}
-			}
 			e.printStackTrace();
 		}
 	}
@@ -190,9 +158,9 @@ public class ThreadServer implements Runnable {
 						
 						rs.close();
 						
-						byte_image = ImageCodec.loadImageToByteArray("profile", Integer.toString(user_id)+"_profile.jpg");
-						profile_image = bs64.encode(byte_image);
-						l_ack.setProfile_img(profile_image);
+						byte_image = ImageCodec.loadImageToByteArray("profile", Integer.toString(user_id)+"_thumbnail.jpg");
+						thumbnail_image = bs64.encode(byte_image);
+						l_ack.setProfile_img(thumbnail_image);
 					}catch(SQLException e){
 						db.printError(e, query);
 					}
@@ -220,7 +188,9 @@ public class ThreadServer implements Runnable {
 				
 					byte_image = bs64.decode(pw_req.getProfile_img());
 					profile_image = Integer.toString(user_id)+"_profile.jpg";
+					thumbnail_image = Integer.toString(user_id)+"_thumbnail.jpg";
 					ImageCodec.saveImage(byte_image, "profile",profile_image);
+					ImageCodec.saveThumbnailImage(byte_image, "profile", thumbnail_image, 0.1f);
 					query = "insert into user_data(user_id, name, gender, country, job) "
 							+ " values(" 
 							+ Integer.toString(user_id)
@@ -258,7 +228,9 @@ public class ThreadServer implements Runnable {
 					if(pm_req.getProfile_img() != null){
 						byte_image = bs64.decode(pm_req.getProfile_img());
 						profile_image = Integer.toString(user_id)+"_profile.jpg";
+						thumbnail_image = Integer.toString(user_id)+"_thumbnail.jpg";
 						ImageCodec.saveImage(byte_image, "profile",profile_image);
+						ImageCodec.saveThumbnailImage(byte_image, "profile", thumbnail_image, 0.1f);
 					}
 					
 					query = "update user_data set "
@@ -426,9 +398,9 @@ public class ThreadServer implements Runnable {
 						db.printError(e, query);
 					}
 					byte_image = ImageCodec.loadImageToByteArray("profile", image_arr.get(i).getName());
-					profile_image = bs64.encode(byte_image);
+					thumbnail_image = bs64.encode(byte_image);
 
-					ideal_arr.add(new ImageNameSet(screen_name, profile_image));
+					ideal_arr.add(new ImageNameSet(screen_name, thumbnail_image));
 				}
 				
 				IdealTypeSearchAck its_ack = new IdealTypeSearchAck();
@@ -590,10 +562,10 @@ public class ThreadServer implements Runnable {
 					}catch(SQLException e){
 						db.printError(e, query);
 					}
-					byte_image = ImageCodec.loadImageToByteArray("profile", Integer.toString(con_arr.get(i)[0])+"_profile.jpg");
-					profile_image = bs64.encode(byte_image);
+					byte_image = ImageCodec.loadImageToByteArray("profile", Integer.toString(con_arr.get(i)[0])+"_thumbnail.jpg");
+					thumbnail_image = bs64.encode(byte_image);
 					
-					gc_ack.getContacts().add(new ContactInfo( new ImageNameSet(send_user, profile_image), con_arr.get(i)[1] ));
+					gc_ack.getContacts().add(new ContactInfo( new ImageNameSet(send_user, thumbnail_image), con_arr.get(i)[1] ));
 				}
 				
 				output = PacketCodec.encode_GetContactAck(gc_ack);
@@ -637,8 +609,8 @@ public class ThreadServer implements Runnable {
 				}
 				
 				byte_image = ImageCodec.loadImageToByteArray("profile", Integer.toString(user_id) + "_thumbnail.jpg");
-				profile_image = bs64.encode(byte_image);
-				prog_ack.setProfile_img(profile_image);
+				thumbnail_image = bs64.encode(byte_image);
+				prog_ack.setProfile_img(thumbnail_image);
 				
 				output = PacketCodec.encode_ProfileGetAck(prog_ack);
 				try{ 
