@@ -22,6 +22,7 @@ public class PacketCodec {
 				else{
 					size = Integer.parseInt(strSize);
 					charBuf = new char[size];
+					isFirstDelimAppear = true;
 				}
 			}
 			// Packet.PK_DELIM == '?'
