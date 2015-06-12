@@ -9,8 +9,8 @@ public class PacketCodec {
 		char charBuf[] = new char[1];
 		String readMsg = "";
 		short isdelim = 0;
-		int size = 1;
-		boolean isFirstDelimAppear = false;
+		int size = 1, totalSize = 0;
+		boolean isFirstDelimAppear = false, moreThanKilobyte = false;
 		String strSize = "";
 		
 		// read character before read delimiter
@@ -20,18 +20,29 @@ public class PacketCodec {
 					strSize += charBuf[0];
 				}
 				else{
-					size = Integer.parseInt(strSize);
+					totalSize = Integer.parseInt(strSize);
+					if( totalSize > 1024){
+						size = 1023;
+						moreThanKilobyte = true;
+					}else{
+						size = totalSize;
+					}
 					charBuf = new char[size];
 					isFirstDelimAppear = true;
 				}
 			}
 			// Packet.PK_DELIM == '?'
 			else if(charBuf[charBuf.length - 1] == '?'){
-				readMsg = new String(charBuf);
+				readMsg += new String(charBuf);
 				isdelim = 1;
 				break;
 			} else {
-				readMsg = new String(charBuf);
+				readMsg += new String(charBuf);
+				totalSize -= size;
+				if(totalSize <= size){
+					size = totalSize;
+					charBuf = new char[size];
+				}
 				continue;
 			}
 		}
