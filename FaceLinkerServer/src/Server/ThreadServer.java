@@ -69,6 +69,7 @@ public class ThreadServer implements Runnable {
 		String send_user = "";
 		String rec_user = "";
 		String thumbnail_image = "";
+		String sendPacket = "";
 		isContinous = true;
 		Database db = new Database();
 		ResultSet rs;
@@ -110,8 +111,9 @@ public class ThreadServer implements Runnable {
 				
 				JoinAck j_ack = new JoinAck(Packet.SUCCESS);
 				output = PacketCodec.encode_JoinAck(j_ack);
+				sendPacket = PacketCodec.addPacketSize(output);
 				try{ 
-					out.println(output);
+					out.println(sendPacket);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -168,8 +170,9 @@ public class ThreadServer implements Runnable {
 				
 				output = PacketCodec.encode_LoginAck(l_ack);
 				
+				sendPacket = PacketCodec.addPacketSize(output);
 				try{ 
-					out.println(output);
+					out.println(sendPacket);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -204,8 +207,9 @@ public class ThreadServer implements Runnable {
 				}
 				ProfileModifyAck pwr_ack = new ProfileModifyAck(Packet.SUCCESS);
 				output = PacketCodec.encode_ProfileWriteAck(pwr_ack);
+				sendPacket = PacketCodec.addPacketSize(output);
 				try{ 
-					out.println(output);
+					out.println(sendPacket);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -250,8 +254,9 @@ public class ThreadServer implements Runnable {
 				
 				ProfileModifyAck pm_ack = new ProfileModifyAck(Packet.SUCCESS);
 				output = PacketCodec.encode_ProfileModifyAck(pm_ack);
+				sendPacket = PacketCodec.addPacketSize(output);
 				try{ 
-					out.println(output);
+					out.println(sendPacket);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -291,8 +296,9 @@ public class ThreadServer implements Runnable {
 				
 				PartRegisterAck pr_ack = new PartRegisterAck(Packet.SUCCESS);
 				output = PacketCodec.encode_PartRegisterAck(pr_ack);
+				sendPacket = PacketCodec.addPacketSize(output);
 				try{ 
-					out.println(output);
+					out.println(sendPacket);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -335,8 +341,9 @@ public class ThreadServer implements Runnable {
 				pg_ack.setPart(part_image);
 				
 				output = PacketCodec.encode_PartGetAck(pg_ack);
+				sendPacket = PacketCodec.addPacketSize(output);
 				try{ 
-					out.println(output);
+					out.println(sendPacket);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -365,8 +372,9 @@ public class ThreadServer implements Runnable {
 				
 				IdealTypeRegisterAck itr_ack = new IdealTypeRegisterAck(Packet.SUCCESS);
 				output = PacketCodec.encode_IdealTypeRegisterAck(itr_ack);
+				sendPacket = PacketCodec.addPacketSize(output);
 				try{ 
-					out.println(output);
+					out.println(sendPacket);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -420,8 +428,9 @@ public class ThreadServer implements Runnable {
 				its_ack.setIdeal_types(ideal_arr);
 				
 				output = PacketCodec.encode_IdealTypeSearchAck(its_ack);
+				sendPacket = PacketCodec.addPacketSize(output);
 				try{ 
-					out.println(output);
+					out.println(sendPacket);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -468,8 +477,9 @@ public class ThreadServer implements Runnable {
 				
 				ContactAck c_ack = new ContactAck(Packet.SUCCESS);
 				output = PacketCodec.encode_ContactAck(c_ack);
+				sendPacket = PacketCodec.addPacketSize(output);
 				try{ 
-					out.println(output);
+					out.println(sendPacket);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -524,8 +534,9 @@ public class ThreadServer implements Runnable {
 				
 				ReplyContactAck rc_ack = new ReplyContactAck(Packet.SUCCESS);
 				output = PacketCodec.encode_ReplyContactAck(rc_ack);
+				sendPacket = PacketCodec.addPacketSize(output);
 				try{ 
-					out.println(output);
+					out.println(sendPacket);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -582,8 +593,9 @@ public class ThreadServer implements Runnable {
 				}
 				
 				output = PacketCodec.encode_GetContactAck(gc_ack);
+				sendPacket = PacketCodec.addPacketSize(output);
 				try{ 
-					out.println(output);
+					out.println(sendPacket);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -626,8 +638,9 @@ public class ThreadServer implements Runnable {
 				prog_ack.setProfile_img(thumbnail_image);
 				
 				output = PacketCodec.encode_ProfileGetAck(prog_ack);
+				sendPacket = PacketCodec.addPacketSize(output);
 				try{ 
-					out.println(output);
+					out.println(sendPacket);
 				}catch(Exception e){
 					e.printStackTrace();
 				}

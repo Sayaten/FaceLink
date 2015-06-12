@@ -9,16 +9,28 @@ public class PacketCodec {
 		char charBuf[] = new char[1];
 		String readMsg = "";
 		short isdelim = 0;
+		int size = 1;
+		boolean isFirstDelimAppear = false;
+		String strSize = "";
 		
 		// read character before read delimiter
-		while(in.read(charBuf, 0, 1) != -1){
+		while(in.read(charBuf, 0, size) != -1){
+			if(!isFirstDelimAppear){
+				if(Packet.FIELD_DELIM.charAt(0) != charBuf[0]){
+					strSize += charBuf[0];
+				}
+				else{
+					size = Integer.parseInt(strSize);
+					charBuf = new char[size];
+				}
+			}
 			// Packet.PK_DELIM == '?'
-			if(charBuf[0] == '?'){
-				readMsg += charBuf[0];
+			else if(charBuf[charBuf.length - 1] == '?'){
+				readMsg += charBuf;
 				isdelim = 1;
 				break;
 			} else {
-				readMsg += charBuf[0];
+				readMsg += charBuf;
 				continue;
 			}
 		}
@@ -38,8 +50,15 @@ public class PacketCodec {
 		return readMsg;
 	}
 	
+	public static String addPacketSize(String src) throws IOException{
+		int size = src.length();
+		String addedSizePacket = Integer.toString(size) + Packet.FIELD_DELIM + src;
+		return addedSizePacket;
+	}
+	
 	public static Packet decode_Header(String src) throws IOException{
 		String type, data;
+		int size;
 		Scanner s = new Scanner(src).useDelimiter("\\"+Packet.FIELD_DELIM);
 		
 		type = s.next();
