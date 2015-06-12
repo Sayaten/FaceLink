@@ -44,6 +44,7 @@ public class PacketCodec {
 				charBuf = new char[size];
 				continue;
 			}
+			Timer.MatrixTime(50);
 		}
 		
 		// remove '\n'

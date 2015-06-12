@@ -193,7 +193,7 @@ public class ThreadServer implements Runnable {
 					profile_image = Integer.toString(user_id)+"_profile.jpg";
 					thumbnail_image = Integer.toString(user_id)+"_thumbnail.jpg";
 					ImageCodec.saveImage(byte_image, "profile",profile_image);
-					ImageCodec.saveThumbnailImage(byte_image, "profile", thumbnail_image, 0.4f);
+					ImageCodec.saveThumbnailImage(byte_image, "profile", thumbnail_image, 0.3f);
 					query = "insert into user_data(user_id, name, gender, country, job) "
 							+ " values(" 
 							+ Integer.toString(user_id)
@@ -234,7 +234,7 @@ public class ThreadServer implements Runnable {
 						profile_image = Integer.toString(user_id)+"_profile.jpg";
 						thumbnail_image = Integer.toString(user_id)+"_thumbnail.jpg";
 						ImageCodec.saveImage(byte_image, "profile",profile_image);
-						ImageCodec.saveThumbnailImage(byte_image, "profile", thumbnail_image, 0.1f);
+						ImageCodec.saveThumbnailImage(byte_image, "profile", thumbnail_image, 0.3f);
 					}
 					
 					query = "update user_data set "

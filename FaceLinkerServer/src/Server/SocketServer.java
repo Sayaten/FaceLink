@@ -29,16 +29,6 @@ public class SocketServer {
 					clientSocket = null;
 				}
 			}
-			/*
-			while(true){
-				if(Thread.activeCount() < 5)
-				{
-					threadServer = new ThreadServer(serverSocket, true);
-					thread = new Thread(threadServer);
-					thread.start();
-				}
-			}
-			*/
 		}	
 	}
 }
