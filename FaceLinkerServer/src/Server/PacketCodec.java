@@ -21,8 +21,8 @@ public class PacketCodec {
 				}
 				else{
 					totalSize = Integer.parseInt(strSize);
-					if( totalSize > 1024){
-						size = 1023;
+					if( totalSize >= 1024){
+						size = 1024;
 					}else{
 						size = totalSize;
 					}
@@ -40,8 +40,8 @@ public class PacketCodec {
 				totalSize -= size;
 				if(totalSize <= size){
 					size = totalSize;
-					charBuf = new char[size];
 				}
+				charBuf = new char[size];
 				continue;
 			}
 		}
