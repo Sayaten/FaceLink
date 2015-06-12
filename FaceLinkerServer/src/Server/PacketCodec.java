@@ -27,11 +27,11 @@ public class PacketCodec {
 			}
 			// Packet.PK_DELIM == '?'
 			else if(charBuf[charBuf.length - 1] == '?'){
-				readMsg += charBuf;
+				readMsg = new String(charBuf);
 				isdelim = 1;
 				break;
 			} else {
-				readMsg += charBuf;
+				readMsg = new String(charBuf);
 				continue;
 			}
 		}
