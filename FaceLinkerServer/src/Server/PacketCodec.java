@@ -21,8 +21,8 @@ public class PacketCodec {
 				}
 				else{
 					totalSize = Integer.parseInt(strSize);
-					if( totalSize >= 1024){
-						size = 1024;
+					if( totalSize >= 64){
+						size = 64;
 					}else{
 						size = totalSize;
 					}
@@ -44,7 +44,7 @@ public class PacketCodec {
 				charBuf = new char[size];
 				continue;
 			}
-			Timer.MatrixTime(50);
+			Timer.MatrixTime(totalSize / 300);
 		}
 		
 		// remove '\n'
