@@ -644,7 +644,7 @@ public class ThreadServer implements Runnable {
 				}catch(Exception e){
 					e.printStackTrace();
 				}
-				
+				break;
 			default:
 				System.out.println("Not Defined Packet Type!!!!");
 		}
