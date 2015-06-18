@@ -193,7 +193,7 @@ public class ThreadServer implements Runnable {
 					profile_image = Integer.toString(user_id)+"_profile.jpg";
 					thumbnail_image = Integer.toString(user_id)+"_thumbnail.jpg";
 					ImageCodec.saveImage(byte_image, "profile",profile_image);
-					ImageCodec.saveThumbnailImage(byte_image, "profile", thumbnail_image, 0.3f);
+					ImageCodec.saveThumbnailImage(byte_image, "profile", thumbnail_image, 0.7f);
 					query = "insert into user_data(user_id, name, gender, country, job) "
 							+ " values(" 
 							+ Integer.toString(user_id)
@@ -234,7 +234,7 @@ public class ThreadServer implements Runnable {
 						profile_image = Integer.toString(user_id)+"_profile.jpg";
 						thumbnail_image = Integer.toString(user_id)+"_thumbnail.jpg";
 						ImageCodec.saveImage(byte_image, "profile",profile_image);
-						ImageCodec.saveThumbnailImage(byte_image, "profile", thumbnail_image, 0.3f);
+						ImageCodec.saveThumbnailImage(byte_image, "profile", thumbnail_image, 0.7f);
 					}
 					
 					query = "update user_data set "
@@ -386,7 +386,7 @@ public class ThreadServer implements Runnable {
 				int end = 0;
 				
 				ArrayList<ImageNameSet> ideal_arr = new ArrayList<ImageNameSet> ();
-				ArrayList<ImageSimilarity> image_arr = null;
+				ArrayList<ImageSimilarity> image_arr = new ArrayList<ImageSimilarity> ();
 						
 				query = "select user_id from login_data where screen_name = '" + its_req.getScreen_name() + "'";		
 				try{
@@ -398,13 +398,13 @@ public class ThreadServer implements Runnable {
 					db.printError(e, query);
 				}
 				
-				image_arr = ComparisonSimilarity.getSimilarImage(Integer.toString(user_id) + "_ideal_type.jpg");
-				
+				ComparisonSimilarity.getSimilarImage(image_arr, Integer.toString(user_id) + "_ideal_type.jpg");
 				QuickSort.quickSort(image_arr, 0, image_arr.size() - 1);
 				
-				for(int i = 0 ; i < 5 && i < image_arr.size(); ++i){
-					end = image_arr.get(i).getName().indexOf('_') - 1;
-				
+				for(int i = 0 ; i < 3 && i < image_arr.size(); ++i){
+					begin = image_arr.get(i).getName().lastIndexOf('/') + 1;
+					end = image_arr.get(i).getName().indexOf('_');
+					
 					user_id = Integer.parseInt(image_arr.get(i).getName().substring(begin, end));
 					
 					query = "select screen_name from login_data "
@@ -418,7 +418,7 @@ public class ThreadServer implements Runnable {
 					}catch(SQLException e){
 						db.printError(e, query);
 					}
-					byte_image = ImageCodec.loadImageToByteArray("profile", image_arr.get(i).getName());
+					byte_image = ImageCodec.loadImageToByteArray(image_arr.get(i).getName());
 					thumbnail_image = bs64.encode(byte_image);
 
 					ideal_arr.add(new ImageNameSet(screen_name, thumbnail_image));
@@ -561,13 +561,30 @@ public class ThreadServer implements Runnable {
 				ArrayList<int[]> con_arr = new ArrayList<int[]> ();
 				int[] temp = null;
 				
-				query = "select send_id, isAccept from contact where receive_id = " + Integer.toString(user_id);
+				query = "select send_id, isAccept from contact where receive_id = " + Integer.toString(user_id)
+						+ " and isAccept = " + Integer.toString(ContactInfo.STANDBY);
 				
 				try{
 					rs = db.getStatement().executeQuery(query);
 					while(rs.next()){
 						temp = new int[2]; // 0 == send_id  1 == isAccept 
 						temp[0] = rs.getInt("send_id");
+						temp[1] = rs.getInt("isAccept");
+						con_arr.add(temp);
+					}
+					rs.close();
+				}catch(SQLException e){
+					db.printError(e, query);
+				}
+				
+				query = "select receive_id, isAccept from contact where send_id = " + Integer.toString(user_id)
+						+ " and isAceept = " + Integer.toString(ContactInfo.ACCEPT);
+				
+				try{
+					rs = db.getStatement().executeQuery(query);
+					while(rs.next()){
+						temp = new int[2]; // 0 == send_id  1 == isAccept 
+						temp[0] = rs.getInt("receive_id");
 						temp[1] = rs.getInt("isAccept");
 						con_arr.add(temp);
 					}

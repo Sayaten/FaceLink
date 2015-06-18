@@ -48,8 +48,8 @@ public class ComparisonSimilarity {
 	public static final String IMG_DIR = "/home/saya/Project/FLImages/profile";
 	public static final String KEY = Key.KEY;
 	
-	public static ArrayList<ImageSimilarity> getSimilarImage(String sample){
-		ArrayList<ImageSimilarity> similar_images = new ArrayList<ImageSimilarity>();
+	public static void getSimilarImage(ArrayList<ImageSimilarity> image_arr, String sample){
+		//ArrayList<ImageSimilarity> similar_images = new ArrayList<ImageSimilarity>();
 		
 		HImage imgOrg = new HImage();
 		HImage imgCmp = new HImage();
@@ -78,33 +78,35 @@ public class ComparisonSimilarity {
 			FSDK.SetFaceDetectionParameters(false, false, 500);
 			
 			for(int i = 0 ; i < pics.length ; ++i){
-				if(pics[i].compareTo(IMG_DIR + Integer.toString(user_id) + "_profile.jpg") == 0){
+				if(pics[i].compareTo(IMG_DIR + "/" + Integer.toString(user_id) + "_profile.jpg") == 0){
 					temp = pics[0];
 					pics[0] = pics[i];
 					pics[i] = temp;
 				}
 			}
 			
-			result = FSDK.LoadImageFromFile(imgOrg, IMG_DIR + sample);
+			result = FSDK.LoadImageFromFile(imgOrg, "/home/saya/Project/FLImages/ideal_type/" + sample);
 			if(result != FSDK.FSDKE_OK)
 			{
-				return null;
+				return;// null;
 			}
 			result = FSDK.DetectFace(imgOrg, fpOrg);
 			if(result != FSDK.FSDKE_OK)
 			{
-				return null;
+				return; //null;
 			}
 			result = FSDK.GetFaceTemplateInRegion(imgOrg, fpOrg, ftOrg);
 			if(result != FSDK.FSDKE_OK)
 			{
-				return null; 
+				return; //null; 
 			}
 			for(int i = 1 ; i < pics.length ; ++i)
 			{
 				// load 1 img
-				result = FSDK.LoadImageFromFile(imgCmp, pics[i]);
-			
+				if(pics[i].contains("_profile.jpg"))
+					result = FSDK.LoadImageFromFile(imgCmp, pics[i]);
+				else
+					continue;
 				// find face
 				result = FSDK.DetectFace(imgCmp, fpCmp);
 				if(result != FSDK.FSDKE_OK)
@@ -128,16 +130,14 @@ public class ComparisonSimilarity {
 				FSDK.MatchFaces(ftOrg, ftCmp, similarity);
 			
 				// save image when similarity is more than 70%
-				if(similarity[0] * 100 > 70.0f) similar_images.add(new ImageSimilarity(pics[i],similarity[0]  * 100));
-				
+				if(similarity[0] * 100 > 70.0f) image_arr.add(new ImageSimilarity(pics[i],similarity[0]  * 100));//similar_images.add(new ImageSimilarity(pics[i],similarity[0]  * 100));
 				FSDK.FreeImage(imgCmp);
 			}
 			writer.close();
 		}catch(IOException e){
 			e.printStackTrace();
 		}
-		
-		return similar_images;
+		//return similar_images;
 	}
 	
 	public static void compareWithOneSample(String sample){

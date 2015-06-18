@@ -49,6 +49,23 @@ public class ImageCodec {
 		return bos.toByteArray();
 	}
 	
+	public static byte[] loadImageToByteArray(String name){
+		File ifile = new File(name);
+		FileInputStream fis;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		byte[] buf = new byte[1024];
+		int readbyte = 0;
+		try{
+			fis = new FileInputStream(ifile);
+			while((readbyte = fis.read(buf)) != -1){
+				bos.write(buf, 0, readbyte);
+			}
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		return bos.toByteArray();
+	}
+	
 	public static void saveThumbnailImage(byte[] byteImage, String dir, String name, int width, int height){
 		ByteArrayInputStream bis = new ByteArrayInputStream(byteImage);
 		BufferedImage image;

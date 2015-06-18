@@ -14,15 +14,16 @@ public class PacketCodec {
 		String strSize = "";
 		
 		// read character before read delimiter
-		while(in.read(charBuf, 0, size) != -1){
+		while(in.read(charBuf, 0, 1) != -1){//(in.read(charBuf, 0, size) != -1){
+			//System.out.println("total size: "+totalSize);
 			if(!isFirstDelimAppear){
 				if(Packet.FIELD_DELIM.charAt(0) != charBuf[0]){
 					strSize += charBuf[0];
 				}
 				else{
 					totalSize = Integer.parseInt(strSize);
-					if( totalSize >= 64){
-						size = 64;
+					if( totalSize >= 1){
+						size = 1;
 					}else{
 						size = totalSize;
 					}
@@ -31,20 +32,20 @@ public class PacketCodec {
 				}
 			}
 			// Packet.PK_DELIM == '?'
-			else if(charBuf[charBuf.length - 1] == '?'){
-				readMsg += String.copyValueOf(charBuf);
+			else if(charBuf[0] == '?'){//(charBuf[charBuf.length - 1] == '?'){
+				readMsg += charBuf[0];//String.copyValueOf(charBuf);
 				isdelim = 1;
 				break;
 			} else {
-				readMsg += String.copyValueOf(charBuf);
+				readMsg += charBuf[0];//String.copyValueOf(charBuf);
 				totalSize -= size;
-				if(totalSize <= size){
-					size = totalSize;
-				}
-				charBuf = new char[size];
+				//if(totalSize <= size){
+				//	size = totalSize;
+				//}
+				//charBuf = new char[size];
 				continue;
 			}
-			Timer.MatrixTime(totalSize / 300);
+			//Timer.MatrixTime(totalSize / 200);
 		}
 		
 		// remove '\n'
