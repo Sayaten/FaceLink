@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class PacketCodec {
-	public static String read_delim(BufferedReader in) throws IOException{
+	public static String readDelimiter(BufferedReader in) throws IOException{
 		char charBuf[] = new char[1];
 		String readMsg = "";
 		short isdelim = 0;
@@ -13,10 +13,10 @@ public class PacketCodec {
 		boolean isFirstDelimAppear = false;
 		String strSize = "";
 		
-		// read character before read delimiter
-		while(in.read(charBuf, 0, 1) != -1){//(in.read(charBuf, 0, size) != -1){
-			//System.out.println("total size: "+totalSize);
+		// read character before packet delimiter
+		while(in.read(charBuf, 0, 1) != -1){
 			if(!isFirstDelimAppear){
+				// read size of packet
 				if(Packet.FIELD_DELIM.charAt(0) != charBuf[0]){
 					strSize += charBuf[0];
 				}
@@ -32,20 +32,15 @@ public class PacketCodec {
 				}
 			}
 			// Packet.PK_DELIM == '?'
-			else if(charBuf[0] == '?'){//(charBuf[charBuf.length - 1] == '?'){
-				readMsg += charBuf[0];//String.copyValueOf(charBuf);
+			else if(charBuf[0] == '?'){
+				readMsg += charBuf[0];
 				isdelim = 1;
 				break;
 			} else {
-				readMsg += charBuf[0];//String.copyValueOf(charBuf);
+				readMsg += charBuf[0];
 				totalSize -= size;
-				//if(totalSize <= size){
-				//	size = totalSize;
-				//}
-				//charBuf = new char[size];
 				continue;
 			}
-			//Timer.MatrixTime(totalSize / 200);
 		}
 		
 		// remove '\n'
@@ -69,7 +64,7 @@ public class PacketCodec {
 		return addedSizePacket;
 	}
 	
-	public static Packet decode_Header(String src) throws IOException{
+	public static Packet decodeHeader(String src) throws IOException{
 		String type, data;
 		int size;
 		Scanner s = new Scanner(src).useDelimiter("\\"+Packet.FIELD_DELIM);
@@ -85,7 +80,7 @@ public class PacketCodec {
 	
 	// About join request
 	// Dncode join request packet data
-	public static String encode_JoinReq(JoinReq pk_data){
+	public static String encodeJoinReq(JoinReq pk_data){
 		String data = Packet.PK_JOIN_REQ + Packet.FIELD_DELIM 
 				+ pk_data.getScreen_name() + Packet.FIELD_DELIM
 				+ pk_data.getPassword() + Packet.FIELD_DELIM
@@ -94,7 +89,7 @@ public class PacketCodec {
 		return data;
 	}
 	// Decode join request packet data
-	public static JoinReq decode_JoinReq(String pk_data) throws IOException{
+	public static JoinReq decodeJoinReq(String pk_data) throws IOException{
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		JoinReq dst = new JoinReq();
 		
@@ -106,7 +101,7 @@ public class PacketCodec {
 	
 	// About join ack
 	// Decode join response packet data
-	public static String encode_JoinAck(JoinAck pk_data){
+	public static String encodeJoinAck(JoinAck pk_data){
 		String data = Packet.PK_JOIN_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
@@ -115,7 +110,7 @@ public class PacketCodec {
 	}
 
 	// Decode join response packet data
-	public static JoinAck decode_JoinAck(String pk_data){
+	public static JoinAck decodeJoinAck(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		JoinAck dst = new JoinAck();
 		
@@ -126,7 +121,7 @@ public class PacketCodec {
 	
 	// About login request
 	// Encode login request
-	public static String encode_LoginReq(LoginReq pk_data){
+	public static String encodeLoginReq(LoginReq pk_data){
 		String data = Packet.PK_LOGIN_REQ + Packet.FIELD_DELIM
 				+ pk_data.getScreen_name() + Packet.FIELD_DELIM
 				+ pk_data.getPassword() + Packet.FIELD_DELIM
@@ -135,7 +130,7 @@ public class PacketCodec {
 		return data;
 	}
 	// Decode Login response packet data
-	public static LoginReq decode_LoginReq(String pk_data){
+	public static LoginReq decodeLoginReq(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		LoginReq dst = new LoginReq();
 	
@@ -147,7 +142,7 @@ public class PacketCodec {
 	
 	// About login ack
 	// Decode login response packet data
-	public static String encode_LoginAck(LoginAck pk_data){
+	public static String encodeLoginAck(LoginAck pk_data){
 		String data = Packet.PK_LOGIN_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM;
 		
@@ -165,7 +160,7 @@ public class PacketCodec {
 	}
 
 	// Decode login response packet data
-	public static LoginAck decode_LoginAck(String pk_data){
+	public static LoginAck decodeLoginAck(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		LoginAck dst = new LoginAck();
 		
@@ -183,7 +178,7 @@ public class PacketCodec {
 	
 	// About profile write request
 	// Encode profile write request packet data
-	public static String encode_ProfileWriteReq(ProfileModifyReq pk_data){
+	public static String encodeProfileWriteReq(ProfileModifyReq pk_data){
 		String data = Packet.PK_PRO_WRITE_REQ + Packet.FIELD_DELIM
 				+ pk_data.getScreen_name() + Packet.FIELD_DELIM
 				+ pk_data.getName() + Packet.FIELD_DELIM
@@ -196,7 +191,7 @@ public class PacketCodec {
 	}
 
 	// Decode profile write request packet data
-	public static ProfileModifyReq decode_ProfileWriteReq(String pk_data){
+	public static ProfileModifyReq decodeProfileWriteReq(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ProfileModifyReq dst = new ProfileModifyReq();
 		
@@ -212,7 +207,7 @@ public class PacketCodec {
 	
 	// About profile write ack
 	// Encode profile write response packet data
-	public static String encode_ProfileWriteAck(ProfileModifyAck pk_data){
+	public static String encodeProfileWriteAck(ProfileModifyAck pk_data){
 		String data = Packet.PK_PRO_WRITE_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
@@ -220,7 +215,7 @@ public class PacketCodec {
 	}
 	
 	// Decode profile write response packet data
-	public static ProfileModifyAck decode_ProfileWriteAck(String pk_data){
+	public static ProfileModifyAck decodeProfileWriteAck(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ProfileModifyAck dst = new ProfileModifyAck();
 		
@@ -231,7 +226,7 @@ public class PacketCodec {
 	
 	// About part register Req
 	// Encode part register request packet
-	public static String encode_PartRegisterReq(PartRegisterReq pk_data){
+	public static String encodePartRegisterReq(PartRegisterReq pk_data){
 		String data = Packet.PK_PART_REG_REQ + Packet.FIELD_DELIM
 				+ pk_data.getScreen_name() + Packet.FIELD_DELIM
 				+ pk_data.getEyes() + Packet.FIELD_DELIM
@@ -243,7 +238,7 @@ public class PacketCodec {
 	}
 
 	// Decode part register request packet data
-	public static PartRegisterReq decode_PartRegisterReq(String pk_data){
+	public static PartRegisterReq decodePartRegisterReq(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		PartRegisterReq dst = new PartRegisterReq();
 		
@@ -258,7 +253,7 @@ public class PacketCodec {
 	
 	// About part register ack
 	// Encode part register response packet data
-	public static String encode_PartRegisterAck(PartRegisterAck pk_data){
+	public static String encodePartRegisterAck(PartRegisterAck pk_data){
 		String data = Packet.PK_PART_REG_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
@@ -266,7 +261,7 @@ public class PacketCodec {
 	}
 	
 	// Decode part register request packet data
-	public static ProfileModifyAck decode_PartRegisterAck(String pk_data){
+	public static ProfileModifyAck decodePartRegisterAck(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ProfileModifyAck dst = new ProfileModifyAck();
 		
@@ -277,7 +272,7 @@ public class PacketCodec {
 	
 	// About part get request
 	// Encode part get request packet
-	public static String encode_PartGetReq(PartGetReq pk_data) {
+	public static String encodePartGetReq(PartGetReq pk_data) {
 		String data = Packet.PK_PART_GET_REQ + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getUser_id()) + Packet.FIELD_DELIM
 				+ pk_data.getPart_type() + Packet.FIELD_DELIM 
@@ -286,7 +281,7 @@ public class PacketCodec {
 	}
 
 	// Decode part get request packet data
-	public static PartGetReq decode_PartGetReq(String pk_data) {
+	public static PartGetReq decodePartGetReq(String pk_data) {
 		Scanner s = new Scanner(pk_data).useDelimiter("\\" + Packet.FIELD_DELIM);
 		PartGetReq dst = new PartGetReq();
 
@@ -298,7 +293,7 @@ public class PacketCodec {
 	
 	// About part get ack
 	// Encode part get response packet data
-	public static String encode_PartGetAck(PartGetAck pk_data){
+	public static String encodePartGetAck(PartGetAck pk_data){
 		String data = Packet.PK_PART_GET_ACK + Packet.FIELD_DELIM
 				+ pk_data.getPart() + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
@@ -306,7 +301,7 @@ public class PacketCodec {
 	}
 	
 	// Decode part get response packet data
-	public static PartGetAck decode_PartGetAck(String pk_data){
+	public static PartGetAck decodePartGetAck(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		PartGetAck dst = new PartGetAck();
 		
@@ -317,7 +312,7 @@ public class PacketCodec {
 	
 	// About ideal type register Req
 	// Encode ideal type request packet
-	public static String encode_IdealTypeRegisterReq(IdealTypeRegisterReq pk_data){
+	public static String encodeIdealTypeRegisterReq(IdealTypeRegisterReq pk_data){
 		String data = Packet.PK_IDEAL_REG_REQ + Packet.FIELD_DELIM
 				+ pk_data.getScreen_name() + Packet.FIELD_DELIM
 				+ pk_data.getIdeal_type() + Packet.FIELD_DELIM
@@ -326,7 +321,7 @@ public class PacketCodec {
 	}
 
 	// Decode ideal type register request packet data
-	public static IdealTypeRegisterReq decode_IdealTypeRegisterReq(String pk_data){
+	public static IdealTypeRegisterReq decodeIdealTypeRegisterReq(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		IdealTypeRegisterReq dst = new IdealTypeRegisterReq();
 		
@@ -338,7 +333,7 @@ public class PacketCodec {
 	
 	// About ideal type register ack
 	// Encode ideal type register response packet data
-	public static String encode_IdealTypeRegisterAck(IdealTypeRegisterAck pk_data){
+	public static String encodeIdealTypeRegisterAck(IdealTypeRegisterAck pk_data){
 		String data = Packet.PK_IDEAL_REG_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
@@ -346,7 +341,7 @@ public class PacketCodec {
 	}
 	
 	// Encode ideal type register response packet data
-	public static IdealTypeRegisterAck decode_IdealTypeRegisterAck(String pk_data){
+	public static IdealTypeRegisterAck decodeIdealTypeRegisterAck(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		IdealTypeRegisterAck dst = new IdealTypeRegisterAck();
 		
@@ -357,7 +352,7 @@ public class PacketCodec {
 
 	// About ideal type search Req
 	// Encode ideal type search request packet
-	public static String encode_IdealTypeSearchReq(IdealTypeSearchReq pk_data){
+	public static String encodeIdealTypeSearchReq(IdealTypeSearchReq pk_data){
 		String data = Packet.PK_IDEAL_SCH_REQ + Packet.FIELD_DELIM
 				+ pk_data.getScreen_name() + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
@@ -365,7 +360,7 @@ public class PacketCodec {
 	}
 
 	// Decode ideal type search request packet data
-	public static IdealTypeSearchReq decode_IdealTypeSearchReq(String pk_data){
+	public static IdealTypeSearchReq decodeIdealTypeSearchReq(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		IdealTypeSearchReq dst = new IdealTypeSearchReq();
 		
@@ -376,7 +371,7 @@ public class PacketCodec {
 	
 	// About ideal type search ack
 	// Encode ideal type search response packet data
-	public static String encode_IdealTypeSearchAck(IdealTypeSearchAck pk_data){
+	public static String encodeIdealTypeSearchAck(IdealTypeSearchAck pk_data){
 		String data = Packet.PK_IDEAL_SCH_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getIdeal_types().size()) + Packet.FIELD_DELIM;
 		for(ImageNameSet ideal_type : pk_data.getIdeal_types()){
@@ -388,7 +383,7 @@ public class PacketCodec {
 	}
 	
 	// Encode ideal type search response packet data
-	public static IdealTypeSearchAck decode_IdealTypeSearchAck(String pk_data){
+	public static IdealTypeSearchAck decodeIdealTypeSearchAck(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		IdealTypeSearchAck dst = new IdealTypeSearchAck();
 		
@@ -403,7 +398,7 @@ public class PacketCodec {
 	
 	// About profile modify Req
 	// Encode profile modify request packet
-	public static String encode_ProfileModifyReq(ProfileModifyReq pk_data){
+	public static String encodeProfileModifyReq(ProfileModifyReq pk_data){
 		String data = Packet.PK_PRO_MODIFY_REQ + Packet.FIELD_DELIM
 				+ pk_data.getScreen_name() + Packet.FIELD_DELIM
 				+ ((pk_data.getName() != null)		  ? pk_data.getName() : " ")		+ Packet.FIELD_DELIM
@@ -416,7 +411,7 @@ public class PacketCodec {
 	}
 
 	// Decode profile modify request packet data
-	public static ProfileModifyReq decode_ProfileModifyReq(String pk_data){
+	public static ProfileModifyReq decodeProfileModifyReq(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ProfileModifyReq dst = new ProfileModifyReq();
 		String temp;
@@ -439,7 +434,7 @@ public class PacketCodec {
 	
 	// About profile modify ack
 	// Encode profile modify register response packet data
-	public static String encode_ProfileModifyAck(ProfileModifyAck pk_data){
+	public static String encodeProfileModifyAck(ProfileModifyAck pk_data){
 		String data = Packet.PK_PRO_MODIFY_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
@@ -447,7 +442,7 @@ public class PacketCodec {
 	}
 	
 	// Encode profile modify response packet data
-	public static ProfileModifyAck decode_ProfileModifyAck(String pk_data){
+	public static ProfileModifyAck decodeProfileModifyAck(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ProfileModifyAck dst = new ProfileModifyAck();
 		
@@ -462,7 +457,7 @@ public class PacketCodec {
 	
 	// About Contact req
 	// Encode contact request packet
-	public static String encode_ContactReq(ContactReq pk_data){
+	public static String encodeContactReq(ContactReq pk_data){
 		String data = Packet.PK_CONTACT_REQ + Packet.FIELD_DELIM
 				+ pk_data.getSend_user() + Packet.FIELD_DELIM
 				+ pk_data.getRec_user() + Packet.FIELD_DELIM
@@ -470,7 +465,7 @@ public class PacketCodec {
 		return data;
 	}
 	// Decode contact request packet
-	public static ContactReq decode_ContactReq(String pk_data){
+	public static ContactReq decodeContactReq(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ContactReq dst =  new ContactReq();
 		
@@ -482,14 +477,14 @@ public class PacketCodec {
 	
 	// About Contact ack
 	// Encode contact ack packet
-	public static String encode_ContactAck(ContactAck pk_data){
+	public static String encodeContactAck(ContactAck pk_data){
 		String data = Packet.PK_CONTACT_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
 		return data;
 	}
 	// Decode contact ack packet
-	public static ContactAck decode_ContactAck(String pk_data){
+	public static ContactAck decodeContactAck(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ContactAck dst = new ContactAck();
 		
@@ -504,7 +499,7 @@ public class PacketCodec {
 	
 	// About Reply Contact req
 	// Encode reply contact request packet
-	public static String encode_ReplyContactReq(ReplyContactReq pk_data){
+	public static String encodeReplyContactReq(ReplyContactReq pk_data){
 		String data = Packet.PK_REPLY_CON_REQ + Packet.FIELD_DELIM
 				+ pk_data.getSend_user() + Packet.FIELD_DELIM
 				+ pk_data.getRec_user() + Packet.FIELD_DELIM
@@ -513,7 +508,7 @@ public class PacketCodec {
 		return data;
 	}
 	// Decode reply contact request packet
-	public static ReplyContactReq decode_ReplyContactReq(String pk_data){
+	public static ReplyContactReq decodeReplyContactReq(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ReplyContactReq dst =  new ReplyContactReq();
 		
@@ -525,14 +520,14 @@ public class PacketCodec {
 	
 	// About Reply Contact ack
 	// Encode reply contact ack packet
-	public static String encode_ReplyContactAck(ReplyContactAck pk_data){
+	public static String encodeReplyContactAck(ReplyContactAck pk_data){
 		String data = Packet.PK_REPLY_CON_ACK + Packet.FIELD_DELIM
 				+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
 		return data;
 	}
 	// Decode reply contact ack packet
-	public static ReplyContactAck decode_ReplyContactAck(String pk_data){
+	public static ReplyContactAck decodeReplyContactAck(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ReplyContactAck dst = new ReplyContactAck();
 		
@@ -547,14 +542,14 @@ public class PacketCodec {
 	
 	// About Get Contact req
 	// Encode get contact request packet
-	public static String encode_GetContactReq(GetContactReq pk_data){
+	public static String encodeGetContactReq(GetContactReq pk_data){
 		String data = Packet.PK_GET_CON_REQ + Packet.FIELD_DELIM
 				+ pk_data.getScreen_name() + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
 		return data;
 	}
 	// Decode get contact request packet
-	public static GetContactReq decode_GetContactReq(String pk_data){
+	public static GetContactReq decodeGetContactReq(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		GetContactReq dst =  new GetContactReq();
 		
@@ -564,7 +559,7 @@ public class PacketCodec {
 	
 	// About Get Contact ack
 	// Encode get contact ack packet
-	public static String encode_GetContactAck(GetContactAck pk_data){
+	public static String encodeGetContactAck(GetContactAck pk_data){
 		int size = pk_data.getContacts().size();
 		String data = Packet.PK_GET_CON_ACK + Packet.FIELD_DELIM
 					+ Integer.toString(size) + Packet.FIELD_DELIM;
@@ -577,7 +572,7 @@ public class PacketCodec {
 		return data;
 	}
 	// Decode get contact ack packet
-	public static GetContactAck decode_GetContactAck(String pk_data){
+	public static GetContactAck decodeGetContactAck(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		GetContactAck dst = new GetContactAck();
 		int size = s.nextInt();
@@ -591,7 +586,7 @@ public class PacketCodec {
 	
 	// About End of Connection
 	// Encode End of Connection Req
-	public static String encode_ConnectionEndReq(ConnectionEndReq pk_data){
+	public static String encodeConnectionEndReq(ConnectionEndReq pk_data){
 		String data = Packet.PK_CONNECTION_END + Packet.FIELD_DELIM
 				+ pk_data.getIsEnd() + Packet.FIELD_DELIM
 				+ Packet.PK_DELIM;
@@ -599,7 +594,7 @@ public class PacketCodec {
 	}
 	
 	// Decode End of Connection Req
-	public static ConnectionEndReq decode_ConnectionEndReq(String pk_data){
+	public static ConnectionEndReq decodeConnectionEndReq(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ConnectionEndReq dst = new ConnectionEndReq();
 		
@@ -610,14 +605,14 @@ public class PacketCodec {
 	
 	// About Profile Get
 	// Encode Profile Get Req
-	public static String encode_ProfileGetReq(ProfileGetReq pk_data){
+	public static String encodeProfileGetReq(ProfileGetReq pk_data){
 		String data = Packet.PK_PRO_GET_REQ + Packet.FIELD_DELIM
 					+ pk_data.getScreen_name() + Packet.FIELD_DELIM
 					+ Packet.PK_DELIM;
 		return data;
 	}
 	// Decode Profile Get Req
-	public static ProfileGetReq decode_ProfileGetReq(String pk_data){
+	public static ProfileGetReq decodeProfileGetReq(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ProfileGetReq dst = new ProfileGetReq();
 		
@@ -627,7 +622,7 @@ public class PacketCodec {
 	}
 	
 	// Encode Profile Get Ack
-	public static String encode_ProfileGetAck(ProfileGetAck pk_data){
+	public static String encodeProfileGetAck(ProfileGetAck pk_data){
 		String data = Packet.PK_PRO_GET_REQ + Packet.FIELD_DELIM
 					+ Integer.toString(pk_data.getResult()) + Packet.FIELD_DELIM
 					+ pk_data.getName() + Packet.FIELD_DELIM
@@ -640,7 +635,7 @@ public class PacketCodec {
 	}
 	
 	// Decode Profile Get Ack
-	public static ProfileGetAck decode_ProfileGetAck(String pk_data){
+	public static ProfileGetAck decodeProfileGetAck(String pk_data){
 		Scanner s = new Scanner(pk_data).useDelimiter("\\"+Packet.FIELD_DELIM);
 		ProfileGetAck dst = new ProfileGetAck();
 		

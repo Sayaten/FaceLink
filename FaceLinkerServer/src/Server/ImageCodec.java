@@ -18,6 +18,7 @@ public class ImageCodec {
 	public static final String RESIZE_WITH_WIDTH = "WIDTH";
 	public static final String RESIZE_WITH_HEIGHT = "HEIGHT";
 
+	// save image to local directory
 	public static void saveImage(byte[] data, String dir, String name){
 		File ofile = new File(IMG_ROOT_DIR + dir + "/" + name);
 		FileOutputStream fos;
@@ -32,6 +33,8 @@ public class ImageCodec {
 		}
 	}
 	
+	// load image from local directory
+	// return byte array
 	public static byte[] loadImageToByteArray(String dir, String name){
 		File ifile = new File(IMG_ROOT_DIR + dir + "/" + name);
 		FileInputStream fis;
@@ -66,6 +69,7 @@ public class ImageCodec {
 		return bos.toByteArray();
 	}
 	
+	// save thumbnail image with width, height length
 	public static void saveThumbnailImage(byte[] byteImage, String dir, String name, int width, int height){
 		ByteArrayInputStream bis = new ByteArrayInputStream(byteImage);
 		BufferedImage image;
@@ -78,6 +82,7 @@ public class ImageCodec {
 				System.out.println("Unvalid length!!");
 				saveImage(byteImage, dir, name);
 			}
+			// resizing smoothly (slow speed)
 			scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 			imageBuf = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 			imageBuf.getGraphics().drawImage(scaledImage, 0, 0, new Color(0,0,0), null);
@@ -90,6 +95,7 @@ public class ImageCodec {
 		saveImage(bos.toByteArray(), dir, name);
 	}
 	
+	// save thumbnail image with one length and standard (width or height)
 	public static void saveThumbnailImage(byte[] byteImage, String dir, String name, int length, String type){
 		ByteArrayInputStream bis = new ByteArrayInputStream(byteImage);
 		BufferedImage image;
@@ -101,12 +107,14 @@ public class ImageCodec {
 			
 			switch(type){
 			case RESIZE_WITH_WIDTH:
+				// resizing smoothly (slow speed)
 				scaledImage = image.getScaledInstance(length, image.getHeight() * length / image.getWidth(), Image.SCALE_SMOOTH);
 				imageBuf = new BufferedImage(length, image.getHeight() * length / image.getWidth() , BufferedImage.TYPE_INT_RGB);
 				imageBuf.getGraphics().drawImage(scaledImage, 0, 0, new Color(0,0,0), null);
 				ImageIO.write(imageBuf, "jpg", bos);
 				break;
 			case RESIZE_WITH_HEIGHT:
+				// resizing smoothly (slow speed)
 				scaledImage = image.getScaledInstance(image.getWidth() * length / image.getHeight() , length, Image.SCALE_SMOOTH);
 				imageBuf = new BufferedImage(image.getWidth() * length / image.getHeight(), length, BufferedImage.TYPE_INT_RGB);
 				imageBuf.getGraphics().drawImage(scaledImage, 0, 0, new Color(0,0,0), null);
@@ -123,6 +131,7 @@ public class ImageCodec {
 		saveImage(bos.toByteArray(), dir, name);
 	}
 	
+	// save thumbnail image with ratio
 	public static void saveThumbnailImage(byte[] byteImage, String dir, String name, float ratio){
 		ByteArrayInputStream bis = new ByteArrayInputStream(byteImage);
 		BufferedImage image;
@@ -136,7 +145,8 @@ public class ImageCodec {
 				System.out.println("Unvaild ratio!!");
 				saveImage(bos.toByteArray(), dir, name);
 			}
-			
+
+			// resizing smoothly (slow speed)
 			scaledImage = image.getScaledInstance((int)(image.getWidth() * ratio), (int)(image.getHeight() * ratio), Image.SCALE_SMOOTH);
 			imageBuf = new BufferedImage((int)(image.getWidth() * ratio), (int)(image.getHeight() * ratio), BufferedImage.TYPE_INT_RGB);
 			imageBuf.getGraphics().drawImage(scaledImage, 0, 0, new Color(0,0,0), null);
