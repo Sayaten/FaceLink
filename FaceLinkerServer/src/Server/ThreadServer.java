@@ -397,8 +397,11 @@ public class ThreadServer implements Runnable {
 				}catch(SQLException e){
 					db.printError(e, query);
 				}
-				
-				ComparisonSimilarity.getSimilarImage(image_arr, Integer.toString(user_id) + "_ideal_type.jpg");
+				try{
+					ComparisonSimilarity.getSimilarImage(image_arr, Integer.toString(user_id) + "_ideal_type.jpg");
+				}catch(Exception e){
+					System.out.println("Image comparison error");
+				}
 				QuickSort.quickSort(image_arr, 0, image_arr.size() - 1);
 				
 				for(int i = 0 ; i < 3 && i < image_arr.size(); ++i){
@@ -469,7 +472,6 @@ public class ThreadServer implements Runnable {
 							+ Integer.toString(send_id)+","
 							+ Integer.toString(rec_id)+","
 							+ Integer.toString(ContactInfo.STANDBY)+")";
-					
 					db.getStatement().executeUpdate(query);
 				}catch(SQLException e){
 					db.printError(e, query);
@@ -513,13 +515,14 @@ public class ThreadServer implements Runnable {
 					db.printError(e, query);
 				}
 				
+				
 				if(rc_req.getReply() == ContactInfo.REJECT){
 					query = "delete from contact where send_id = " + Integer.toString(send_id)
 							+" and receive_id = " + Integer.toString(rec_id);
 					try{
 						db.getStatement().executeUpdate(query);
-					}catch(SQLException e){
 						db.printError(e, query);
+					}catch(SQLException e){
 					}
 				}else if(rc_req.getReply() == ContactInfo.ACCEPT){
 					query = "update contact set isAccept = "+Integer.toString(rc_req.getReply())
@@ -578,7 +581,7 @@ public class ThreadServer implements Runnable {
 				}
 				
 				query = "select receive_id, isAccept from contact where send_id = " + Integer.toString(user_id)
-						+ " and isAceept = " + Integer.toString(ContactInfo.ACCEPT);
+						+ " and isAccept = " + Integer.toString(ContactInfo.ACCEPT);
 				
 				try{
 					rs = db.getStatement().executeQuery(query);
